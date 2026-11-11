@@ -492,6 +492,38 @@ body{
   .animal-ip,.ip-sway,.preview-cell{animation:none!important;}
 }
 
+/* 情境选项与完整内容：沿用 750px 设计宽度，长文案自动换行。 */
+.q-hint{margin-top:.18rem;font-size:.22rem;color:#A79BB4;line-height:1.6;}
+.sum-head{display:block;width:fit-content;max-width:100%;}
+.opt{min-height:.98rem;line-height:1.6;}
+.opt-copy{flex:1;min-width:0;overflow-wrap:break-word;}
+.content-section{margin-top:.38rem;}
+.section-title{font-size:.30rem;font-weight:800;line-height:1.5;color:#635573;}
+.section-note{margin-top:.1rem;font-size:.22rem;line-height:1.75;color:#9B8DA7;}
+.trait-list{display:grid;grid-template-columns:minmax(0,1fr);gap:.18rem;margin-top:.22rem;}
+.trait-card{min-width:0;padding:.25rem .28rem;background:rgba(255,255,255,.9);border:.015rem solid #ECE2F2;border-radius:.25rem;}
+.trait-heading{display:flex;align-items:center;justify-content:space-between;gap:.15rem;}
+.trait-heading h3{font-size:.26rem;font-weight:700;color:#6F5E7C;}
+.trait-value{font-size:.21rem;color:#A08BAC;white-space:nowrap;}
+.trait-meter{height:.09rem;margin:.17rem 0;border-radius:.1rem;background:#F1ECF5;overflow:hidden;}
+.trait-meter i{height:100%;display:block;border-radius:inherit;transition:width .4s ease;}
+.trait-desc{font-size:.24rem;line-height:1.8;color:#70627F;}
+.trait-tip{font-size:.22rem;line-height:1.8;margin-top:.12rem;color:#AD8DA6;}
+.axis-card{margin-top:.22rem;padding:.1rem .28rem;background:rgba(255,255,255,.88);border-radius:.26rem;border:.015rem solid #E9E3F4;}
+.axis-row{padding:.22rem 0;}
+.axis-row+.axis-row{border-top:.015rem dashed #EEE4F4;}
+.axis-labels{display:flex;justify-content:space-between;gap:.15rem;font-size:.23rem;color:#8A7299;}
+.axis-rail{position:relative;height:.12rem;border-radius:.1rem;margin:.17rem .09rem;background:linear-gradient(90deg,#C9DAF4,#EEE0F0 50%,#F4C8DB);}
+.axis-rail:after{content:"";position:absolute;left:50%;top:-.04rem;height:.2rem;width:.015rem;background:#BAA9C9;}
+.axis-rail i{position:absolute;top:50%;width:.2rem;height:.2rem;border:.035rem solid white;border-radius:50%;background:#BC8DB7;transform:translate(-50%,-50%);box-shadow:0 .02rem .08rem #DCC6DC;z-index:1;}
+.axis-note{font-size:.21rem;line-height:1.6;color:#AB9BB5;}
+.zodiac-range{margin-top:.12rem;font-size:.22rem;color:#B093B7;}
+.zodiac-desc{white-space:pre-line;line-height:1.9;}
+.report-foot{margin-top:.3rem;color:#B3A4BD;font-size:.21rem;line-height:1.8;text-align:center;}
+.zs-item small{font-size:.15rem;color:#B1A0BC;display:block;margin-top:.06rem;white-space:nowrap;}
+.zs-item{min-height:1.25rem;}
+@media(min-width:600px){.trait-list{grid-template-columns:repeat(2,minmax(0,1fr));}}
+
 </style>
 </head>
 <body>
@@ -504,7 +536,7 @@ body{
     <div class="welcome-head">
       <div class="welcome-kicker">治愈系人格动物园</div>
       <h1 class="welcome-title">你心里住着<br><em>哪只小动物</em></h1>
-      <p class="welcome-sub">30 道小题，2 分钟<br>找到你的人格动物图鉴</p>
+      <p class="welcome-sub">12 题初识自己 · 30 题完整探索<br>找到你的人格动物图鉴</p>
     </div>
 
     <div class="preview-row">
@@ -549,7 +581,8 @@ body{
       <div class="q-text" id="qtext">加载中…</div>
     </div>
 
-    <div class="opt-list" id="optList"></div>
+    <p class="q-hint">选择更接近平时状态的一项，不必选择理想中的自己。</p>
+    <div class="opt-list" id="optList" role="radiogroup" aria-labelledby="qtext"></div>
 
     <div class="quiz-nav">
       <button class="nav-btn" id="btnPrev">上一题</button>
@@ -559,7 +592,7 @@ body{
     <div class="quick-wrap" id="quickWrap" hidden>
       <div class="quick-hint">已经答满 12 题啦，可以先看一眼简版结果喵～</div>
       <button class="quick-btn" id="btnQuickResult" type="button">看看我的简版报告</button>
-      <div class="quick-sub">也可以继续答完 30 题，报告会更准哦</div>
+      <div class="quick-sub">也可以继续答完 30 题，补充更多情境中的自己</div>
     </div>
   </section>
 
@@ -597,12 +630,25 @@ body{
 
     <div class="module-list" id="moduleList"></div>
 
+    <section class="content-section" aria-labelledby="traitTitle">
+      <h2 class="section-title" id="traitTitle">12 项特质画像</h2>
+      <p class="section-note" id="traitNote"></p>
+      <div class="trait-list" id="traitList"></div>
+    </section>
+    <section class="content-section" aria-labelledby="axisTitle">
+      <h2 class="section-title" id="axisTitle">四组人格偏好</h2>
+      <p class="section-note">趣味 MBTI 风格归类，来自本次选择。两侧接近均衡时，不必拘泥于类型。</p>
+      <div class="axis-card" id="axisList"></div>
+    </section>
+
     <div class="zodiac-card" id="zodiacCard" hidden>
       <div class="zodiac-title">星座趣味参考</div>
+      <div class="zodiac-range" id="zodiacRange"></div>
       <div class="zodiac-main" id="zodiacMain"></div>
       <div class="zodiac-desc" id="zodiacDesc"></div>
     </div>
 
+    <p class="report-foot">趣味自我探索 · 结果来自本次选择，不定义完整的你</p>
     <p class="ver-tip" id="verTip" hidden></p>
 
     <div class="res-actions" id="resActions">
@@ -644,6 +690,8 @@ body{
 
 <!-- 本地打开也可保存海报：动物图片已内嵌，替换位置见 personalityDict 与 assets/animals.js。 -->
 <script src="assets/animals.js"></script>
+<!-- 完整题库、选项计分与报告文案替换位置：assets/content.js -->
+<script src="assets/content.js"></script>
 <script>
 (function(){
 'use strict';
@@ -663,45 +711,11 @@ body{
   };
 })();
 
-/* =========================================================
-   1. 题库（30 题）
-   已修正：Q17/Q18 反向标记颠倒、Q22/Q24/Q26/Q28 反向缺失
-   ========================================================= */
-var questionConfig = [
-  {id:1, dim:'S',     isReverse:false, text:'别人语气稍微冷淡，我容易多想'},
-  {id:2, dim:'S',     isReverse:false, text:'我能快速察觉到别人情绪的细微变化'},
-  {id:3, dim:'E',     isReverse:false, text:'我习惯性照顾身边人的情绪感受'},
-  {id:4, dim:'E',     isReverse:false, text:'我尽量避免和身边人发生冲突'},
-  {id:5, dim:'StRaw', isReverse:false, text:'压力大的时候我的情绪很难平复'},
-  {id:6, dim:'A',     isReverse:false, text:'我很在意他人对我的评价'},
-  {id:7, dim:'R',     isReverse:false, text:'做重大决定前我会反复评估风险'},
-  {id:8, dim:'PRaw',  isReverse:false, text:'一件事长期看不到回报我很容易放弃'},
-  {id:9, dim:'N',     isReverse:false, text:'我厌倦日复一日重复的生活，渴望新鲜体验'},
-  {id:10,dim:'D',     isReverse:false, text:'重大抉择我更愿意自己拿主意，不喜被别人安排'},
-  {id:11,dim:'CHECK', isReverse:false, text:'空闲时我更喜欢热闹的聚会'},
-  {id:12,dim:'CHECK', isReverse:false, text:'未知的机会第一反应我是担忧风险'},
-  {id:13,dim:'S',     isReverse:false, text:'一段关系里我常常是最先感知到不对劲的那个人'},
-  {id:14,dim:'S',     isReverse:true,  text:'别人的看法基本不会影响我的心情'},
-  {id:15,dim:'E',     isReverse:false, text:'哪怕委屈一点，我也希望维持氛围和谐'},
-  {id:16,dim:'E',     isReverse:false, text:'看到别人难过我很容易共情难受'},
-  {id:17,dim:'StRaw', isReverse:true,  text:'就算遇到打击我也可以很快调整状态'},
-  {id:18,dim:'StRaw', isReverse:false, text:'遇到挫折我会长时间陷入低落'},
-  {id:19,dim:'StRaw', isReverse:false, text:'事情悬而未决，我内心一直焦虑不安'},
-  {id:20,dim:'A',     isReverse:true,  text:'我做事不需要得到别人认可才有动力'},
-  {id:21,dim:'A',     isReverse:false, text:'被人否定的时候我会失落很久'},
-  {id:22,dim:'R',     isReverse:true,  text:'我愿意赌一把去尝试高风险高回报的机会'},
-  {id:23,dim:'R',     isReverse:false, text:'稳妥安全是我做选择的第一标准'},
-  {id:24,dim:'PRaw',  isReverse:true,  text:'认准一件事，我可以长期深耕下去'},
-  {id:25,dim:'PRaw',  isReverse:false, text:'枯燥重复的任务很容易耗尽我的耐心'},
-  {id:26,dim:'N',     isReverse:true,  text:'稳定不变的日子会给我满满的安全感'},
-  {id:27,dim:'N',     isReverse:false, text:'我总想去体验没接触过的赛道、新鲜事物'},
-  {id:28,dim:'D',     isReverse:true,  text:'做决定前我习惯大量听取别人的意见'},
-  {id:29,dim:'D',     isReverse:false, text:'我需要大量独处时间恢复精力'},
-  {id:30,dim:'CHECK', isReverse:false, text:'很多时候我不知道自己真正想要什么'}
-];
+/* 30 道情境题及逐选项分值：在 assets/content.js 的 questions 中修改。 */
+var questionConfig = window.GUANJI_CONTENT.questions;
 
 /* =========================================================
-   2. 九只人格动物
+   2. 人格动物素材
    desc 文案可直接改写；img 是图片替换入口，网页与海报共同使用；默认读取 assets/animals.js
    ========================================================= */
 var personalityDict = {
@@ -719,116 +733,65 @@ var personalityDict = {
 /* =========================================================
    3. 16 型 → 主/副人格
    ========================================================= */
-var mbtiIpMap = [
-{code:'INTJ',name:'建筑师',main:'panther',sub:'fox',
- freeText:'INTJ｜建筑师｜主人格：独行黑豹，理智独立，擅长长线规划。',
- fullText:'【INTJ｜建筑师】\n特质：独立理性，善于深度思考，有长远大局观。\n优势：逻辑强，目标清晰，愿意为长期目标布局。\n短板：容易过度思虑，不太擅长处理复杂人情。\n事业方向：适合策略规划、研究、分析类工作。\n感情模式：宁缺毋滥，重视精神同频，讨厌无意义内耗。'},
-{code:'INTP',name:'逻辑学家',main:'fox',sub:'turtle',
- freeText:'INTP｜逻辑学家｜主人格：好奇小狐狸，热爱思考，乐于探索一切未知。',
- fullText:'【INTP｜逻辑学家】\n特质：好奇心旺盛，沉迷思考各类抽象问题。\n优势：脑洞大，学习理解能力强，不盲从主流观点。\n短板：执行力偏弱，容易想得多做得少。\n事业方向：研发、策划、理论研究、创意岗位。\n感情模式：注重思想共鸣，不喜欢黏腻拘束的关系。'},
-{code:'ENTJ',name:'指挥官',main:'panther',sub:'bear',
- freeText:'ENTJ｜指挥官｜主人格：独行黑豹，目标感极强，做事果断有魄力。',
- fullText:'【ENTJ｜指挥官】\n特质：自信果决，擅长统筹安排，天生领导者。\n优势：敢冲敢闯，抗压强，推动事情落地能力优秀。\n短板：容易强势，忽略他人情绪感受。\n事业方向：管理、创业、项目负责人、市场开拓。\n感情模式：互相成长，势均力敌的关系最适合你。'},
-{code:'ENTP',name:'辩论家',main:'fox',sub:'puppy',
- freeText:'ENTP｜辩论家｜主人格：好奇小狐狸，思维跳脱，乐于挑战固有规则。',
- fullText:'【ENTP｜辩论家】\n特质：脑洞源源不断，喜欢思辨、碰撞新观点。\n优势：创意足，适应力强，擅长打破僵局。\n短板：耐心不足，容易三分钟热度。\n事业方向：营销策划、谈判、新媒体、创新业务。\n感情模式：讨厌枯燥，需要有趣、能一起折腾的伴侣。'},
-{code:'INFJ',name:'提倡者',main:'cat',sub:'koala',
- freeText:'INFJ｜提倡者｜主人格：敏感小猫，洞察力强，内心拥有坚定理想。',
- fullText:'【INFJ｜提倡者】\n特质：共情深刻，洞察力强，有自己内心的信仰。\n优势：善于读懂他人，做事有使命感。\n短板：容易内耗，过度背负别人的情绪。\n事业方向：教育、心理咨询、人文、策划。\n感情模式：极度看重灵魂契合，宁缺毋滥。'},
-{code:'INFP',name:'调停者',main:'koala',sub:'cat',
- freeText:'INFP｜调停者｜主人格：暖心考拉，内心柔软，遵从自己内心价值观。',
- fullText:'【INFP｜调停者】\n特质：理想主义，善良敏感，忠于内心。\n优势：共情力强，待人真诚，拥有独特的创造力。\n短板：容易自我怀疑，害怕现实的冲突。\n事业方向：写作、艺术、人文、服务类岗位。\n感情模式：追求纯粹真诚的感情，防备心较重。'},
-{code:'ENFJ',name:'主人公',main:'puppy',sub:'koala',
- freeText:'ENFJ｜主人公｜主人格：快乐小狗，擅长鼓舞他人，自带感染力。',
- fullText:'【ENFJ｜主人公】\n特质：热情温暖，擅长洞察人心，愿意带动身边人成长。\n优势：情商高，擅长沟通，很会照顾别人感受。\n短板：容易过度讨好，忽略自己需求。\n事业方向：培训、人力资源、教师、社群运营。\n感情模式：愿意付出，渴望双向奔赴的亲密关系。'},
-{code:'ENFP',name:'竞选者',main:'puppy',sub:'fox',
- freeText:'ENFP｜竞选者｜主人格：快乐小狗，充满热情，热爱一切新鲜有趣事物。',
- fullText:'【ENFP｜竞选者】\n特质：热情自由，想象力丰富，讨厌枯燥重复。\n优势：感染力强，脑洞多，擅长链接不同的人。\n短板：定力不足，很难长期做枯燥工作。\n事业方向：新媒体、活动策划、公关、创意。\n感情模式：讨厌压抑，向往轻松浪漫的相处。'},
-{code:'ISTJ',name:'物流师',main:'turtle',sub:'bear',
- freeText:'ISTJ｜物流师｜主人格：谨慎乌龟，踏实稳重，做事严谨靠谱。',
- fullText:'【ISTJ｜物流师】\n特质：严谨守序，责任心强，做事一步一个脚印。\n优势：靠谱细心，执行力稳定，值得托付。\n短板：不爱冒险，对新变化适应偏慢。\n事业方向：财务、行政、质控、技术运维。\n感情模式：慢热专一，偏爱稳定踏实的长期关系。'},
-{code:'ISFJ',name:'守卫者',main:'koala',sub:'turtle',
- freeText:'ISFJ｜守卫者｜主人格：暖心考拉，温柔负责，习惯默默照顾周围的人。',
- fullText:'【ISFJ｜守卫者】\n特质：温柔顾家，责任心强，习惯为他人付出。\n优势：细心体贴，做事稳妥，非常靠谱。\n短板：不懂拒绝，经常委屈自己迁就别人。\n事业方向：医护、行政、后勤、各类服务岗位。\n感情模式：细水长流，愿意默默为家庭付出。'},
-{code:'ESTJ',name:'总经理',main:'bear',sub:'panther',
- freeText:'ESTJ｜总经理｜主人格：热血小熊，务实自律，做事讲求规则效率。',
- fullText:'【ESTJ｜总经理】\n特质：务实干练，重视秩序、责任与效率。\n优势：执行力强，擅长落地，遇事不拖沓。\n短板：变通不足，有时过于讲规则缺少人情味。\n事业方向：管理、生产运营、合规、供应链。\n感情模式：踏实过日子，看重责任感与担当。'},
-{code:'ESFJ',name:'执政官',main:'puppy',sub:'sheep',
- freeText:'ESFJ｜执政官｜主人格：快乐小狗，擅长维护人际关系，在意大家的感受。',
- fullText:'【ESFJ｜执政官】\n特质：外向热心，重视人情往来，在意集体氛围。\n优势：擅长社交协调，很懂人情世故。\n短板：容易过度在意别人评价，容易焦虑。\n事业方向：人事、客服、线下运营、社群。\n感情模式：看重家庭，喜欢热闹安稳的生活。'},
-{code:'ISTP',name:'鉴赏家',main:'bear',sub:'fox',
- freeText:'ISTP｜鉴赏家｜主人格：热血小熊，动手能力强，冷静务实不爱空谈。',
- fullText:'【ISTP｜鉴赏家】\n特质：冷静务实，擅长实操，追求自由不受约束。\n优势：动手能力强，遇事冷静，适应力不错。\n短板：不喜欢复杂人情应酬，不爱长期规划。\n事业方向：技术岗、维修、调试、实操类工作。\n感情模式：不喜黏糊，需要足够的个人空间。'},
-{code:'ISFP',name:'探险家',main:'cat',sub:'sheep',
- freeText:'ISFP｜探险家｜主人格：敏感小猫，感知力强，活在当下享受生活。',
- fullText:'【ISFP｜探险家】\n特质：细腻感性，审美在线，不喜宏大规划。\n优势：感受力强，做事随心真诚。\n短板：回避冲突，不喜欢做长期艰难抉择。\n事业方向：设计、手工、艺术、体验型岗位。\n感情模式：慢热敏感，需要被尊重、被理解。'},
-{code:'ESTP',name:'企业家',main:'fox',sub:'puppy',
- freeText:'ESTP｜企业家｜主人格：好奇小狐狸，敢闯敢试，擅长抓住当下机会。',
- fullText:'【ESTP｜企业家】\n特质：现实灵活，热衷冒险，擅长把握当下机会。\n优势：行动力极强，擅长随机应变。\n短板：缺少长期规划，容易短期主义。\n事业方向：销售、贸易、线下商务、创业。\n感情模式：活在当下，喜欢轻松刺激的相处。'},
-{code:'ESFP',name:'表演者',main:'puppy',sub:'cat',
- freeText:'ESFP｜表演者｜主人格：快乐小狗，热爱热闹，乐于享受当下的人生。',
- fullText:'【ESFP｜表演者】\n特质：外向活泼，享受当下，感染力很强。\n优势：擅长活跃气氛，共情当下情绪。\n短板：很难忍受长期枯燥的规划和坚持。\n事业方向：主播、演艺、销售、活动现场。\n感情模式：追求快乐相处，讨厌沉重压抑关系。'}
-];
+/* 16 型主副动物映射与五部分完整文案：在 assets/content.js 的 reports 中修改。 */
+var mbtiIpMap = window.GUANJI_CONTENT.reports;
 
 /* =========================================================
-   4. 星座（起始日为标准分界，跨年闭合）
-   bias 保留但【不参与】MBTI 计算，仅作展示层彩蛋
+   4. 星座：固定月日趣味参考，与题目分值及人格判断完全独立。
+   文案与日期区间在 assets/content.js 的 zodiacs 中修改。
    ========================================================= */
-var zodiacConfig = [
-  {month:1, day:20, name:'水瓶座', desc:'独立有想法，讨厌被束缚',   bias:{S:-2,N:3}},
-  {month:2, day:19, name:'双鱼座', desc:'敏感浪漫，共情力强',       bias:{S:3,E:2}},
-  {month:3, day:21, name:'白羊座', desc:'热血冲动，敢冲敢闯',       bias:{N:2,D:2}},
-  {month:4, day:20, name:'金牛座', desc:'踏实稳重，追求安稳',       bias:{PRaw:-3,R:2}},
-  {month:5, day:21, name:'双子座', desc:'好奇心旺盛，思维跳脱',     bias:{N:4}},
-  {month:6, day:22, name:'巨蟹座', desc:'顾家细腻，情绪丰富',       bias:{S:3,E:2}},
-  {month:7, day:23, name:'狮子座', desc:'自信外向，在意认可',       bias:{A:3,D:2}},
-  {month:8, day:23, name:'处女座', desc:'细心谨慎，追求完美',       bias:{R:3}},
-  {month:9, day:23, name:'天秤座', desc:'追求和谐，纠结犹豫',       bias:{E:3}},
-  {month:10,day:24, name:'天蝎座', desc:'洞察力强，爱恨分明',       bias:{S:4}},
-  {month:11,day:23, name:'射手座', desc:'热爱自由，乐观爱冒险',     bias:{N:4}},
-  {month:12,day:22, name:'摩羯座', desc:'隐忍坚韧，目标导向',       bias:{PRaw:-4}}
+var zodiacConfig = window.GUANJI_CONTENT.zodiacs;
+var traitConfig = window.GUANJI_CONTENT.traits;
+var DIM_KEYS = traitConfig.map(function(d){return d.key;});
+var AXIS_KEYS = ['E','N','F','J'];
+var AXIS_NAMES = [
+  {key:'E',left:'内向 I',right:'外向 E'},
+  {key:'N',left:'实感 S',right:'直觉 N'},
+  {key:'F',left:'思考 T',right:'情感 F'},
+  {key:'J',left:'感知 P',right:'判断 J'}
 ];
 
-var ZODIAC_STARTS = [
-  {m:1, d:1,  idx:11}, {m:1, d:20, idx:0},  {m:2, d:19, idx:1},
-  {m:3, d:21, idx:2},  {m:4, d:20, idx:3},  {m:5, d:21, idx:4},
-  {m:6, d:22, idx:5},  {m:7, d:23, idx:6},  {m:8, d:23, idx:7},
-  {m:9, d:23, idx:8},  {m:10,d:24, idx:9},  {m:11,d:23, idx:10},
-  {m:12,d:22, idx:11}
-];
+function daysInBirthMonth(month){
+  return [31,29,31,30,31,30,31,31,30,31,30,31][Number(month)-1] || 31;
+}
 
 function getZodiac(month, day){
-  var m = parseInt(month,10), d = parseInt(day,10);
-  if(!m || !d || m<1 || m>12 || d<1 || d>31) return null;
-  var cur = ZODIAC_STARTS[0];
-  for(var i=0;i<ZODIAC_STARTS.length;i++){
-    var s = ZODIAC_STARTS[i];
-    if(m > s.m || (m === s.m && d >= s.d)) cur = s;
+  if(!/^\d{1,2}$/.test(String(month)) || !/^\d{1,2}$/.test(String(day))) return null;
+  var m=Number(month),d=Number(day);
+  if(m<1 || m>12 || d<1 || d>daysInBirthMonth(m)) return null;
+  var result=zodiacConfig[zodiacConfig.length-1];
+  for(var i=0;i<zodiacConfig.length;i++){
+    var z=zodiacConfig[i];
+    if(m>z.month || (m===z.month && d>=z.day)) result=z;
   }
-  return zodiacConfig[cur.idx];
+  return result;
 }
 
 /* =========================================================
-   5. 计分
+   5. 每个选项单独计分：12 项特质与四组人格偏好各自求平均。
+   不是正式 MBTI 量表；50 表示两侧均衡，未答题不计入平均。
    ========================================================= */
-var DIM_KEYS = ['S','E','StRaw','A','R','PRaw','N','D'];
+function validAnswer(q,v){
+  return typeof v==='number' && v%1===0 && v>=1 && v<=q.options.length;
+}
 
 function countAnswered(map){
-  var n = 0;
+  var n=0;
   for(var i=0;i<questionConfig.length;i++){
-    if(map[questionConfig[i].id] != null) n++;
+    var q=questionConfig[i];
+    if(validAnswer(q,map && map[q.id])) n++;
   }
   return n;
 }
 
-/* 全部选同一项 → 无效 */
+/* 保留产品要求：全同选项判无效；简版须完成前 12 题，确保全部维度有输入。 */
 function checkValid(map){
-  if(!map || typeof map!=='object') return false;
+  if(!map || typeof map!=='object' || Array.isArray(map)) return false;
   var vals=[];
   for(var i=0;i<questionConfig.length;i++){
-    var v=map[questionConfig[i].id];
-    if(v==null) continue;
-    if(typeof v!=='number' || v%1!==0 || v<1 || v>5) return false;
+    var q=questionConfig[i],v=map[q.id];
+    if(v==null){if(i<12) return false;continue;}
+    if(!validAnswer(q,v)) return false;
     vals.push(v);
   }
   if(vals.length<12) return false;
@@ -836,115 +799,83 @@ function checkValid(map){
   return false;
 }
 
-/* 按已答题数归一化，未答不计分（简版不会被拉低） */
-function normalize(map){
-  var sum={},mx={};
-  for(var i=0;i<questionConfig.length;i++){
-    var q=questionConfig[i],a=map[q.id];
-    if(q.dim==='CHECK' || a==null) continue;
-    var s=q.isReverse?(6-a):a;
-    /* 五档回答映射到 0/25/50/75/100，中间档为 50%。 */
-    sum[q.dim]=(sum[q.dim]||0)+(s-1);
-    mx[q.dim]=(mx[q.dim]||0)+4;
-  }
-  var pct={};
-  for(var k=0;k<DIM_KEYS.length;k++){
-    var d=DIM_KEYS[k];
-    pct[d]=mx[d]?Math.round(sum[d]/mx[d]*100):50;
-  }
-  pct.St=100-pct.StRaw;
-  pct.P=100-pct.PRaw;
-  /* 原始 R 题衡量谨慎程度，展示“行动冲劲”时需反向。 */
-  pct.R=100-pct.R;
-  return pct;
+function scoreAnswers(map){
+  var sum={},counts={},axisSum={},axisCounts={};
+  questionConfig.forEach(function(q){
+    var v=map && map[q.id];
+    if(!validAnswer(q,v)) return;
+    var o=q.options[v-1];
+    Object.keys(o.scores || {}).forEach(function(k){
+      sum[k]=(sum[k]||0)+o.scores[k]; counts[k]=(counts[k]||0)+1;
+    });
+    Object.keys(o.axes || {}).forEach(function(k){
+      axisSum[k]=(axisSum[k]||0)+o.axes[k]; axisCounts[k]=(axisCounts[k]||0)+1;
+    });
+  });
+  var pct={},axes={};
+  DIM_KEYS.forEach(function(k){pct[k]=counts[k]?Math.round(sum[k]/counts[k]):50;});
+  AXIS_KEYS.forEach(function(k){
+    axes[k]=axisCounts[k]?Math.round(axisSum[k]/axisCounts[k]):50;
+    pct[k]=axes[k];
+  });
+  return {pct:pct,axes:axes,counts:counts,axisCounts:axisCounts};
 }
+
+function normalize(map){return scoreAnswers(map).pct;}
 
 function mapToMbtiAxis(p){
-  return {
-    E_I: p.E > 50 ? 'E' : 'I',
-    S_N: p.N > 50 ? 'N' : 'S',
-    T_F: p.S > 50 ? 'F' : 'T',
-    J_P: p.D > 50 ? 'J' : 'P'
-  };
+  return {E_I:p.E>50?'E':'I',S_N:p.N>50?'N':'S',T_F:p.F>50?'F':'T',J_P:p.J>50?'J':'P'};
+}
+function getMbtiCode(ax){return ax.E_I+ax.S_N+ax.T_F+ax.J_P;}
+
+function describeTraits(scored){
+  var names=['偏低','中等偏低','中等偏高','偏高'];
+  return traitConfig.map(function(d){
+    var value=scored.pct[d.key],level=Math.min(3,Math.floor(value/25));
+    return {key:d.key,label:d.label,value:value,level:level,levelName:names[level],
+      desc:d.levels[level],tip:d.tip,bar:d.bar,bg:d.bg,observations:scored.counts[d.key]||0};
+  });
 }
 
-function getMbtiCode(ax){
-  return ax.E_I + ax.S_N + ax.T_F + ax.J_P;
+function buildModules(item,pct){
+  var titles={trait:'特质',strength:'优势',weakness:'短板',career:'事业方向',love:'感情模式'};
+  return ['trait','strength','weakness','career','love'].map(function(k){
+    var text=item.sections[k];
+    /* 同一人格也可能有不同边界：不要把低讨好倾向写成习惯性讨好。 */
+    if(item.code==='ENFJ' && k==='weakness' && pct.pleasing<50 && pct.boundaries>50){
+      text='你愿意照顾别人，也能保留自己的立场。需要留意的是，不必把让每个人都变好当成自己的责任；在持续支持他人的同时，也为休息和个人目标留出空间。';
+    }
+    return {key:k,title:titles[k],text:text};
+  });
 }
 
-/* 星座偏移：仅供展示，不参与上面任何判定 */
-function applyZodiacDimOffset(p, zod){
-  if(!zod || !zod.bias) return p;
-  var r = {};
-  for(var k in p) r[k] = p[k];
-  for(var key in zod.bias){
-    if(r[key] == null) continue;
-    r[key] = Math.max(0, Math.min(100, r[key] + zod.bias[key]));
-  }
-  return r;
-}
-
-function parseFullText(text){
-  var map = {'特质':'trait','优势':'strength','短板':'weakness','事业方向':'career','感情模式':'love'};
-  var out = [], lines = String(text).split('\n');
-  for(var i=0;i<lines.length;i++){
-    var line = lines[i].trim();
-    if(!line) continue;
-    var p = line.indexOf('：');
-    if(p < 0) continue;
-    var key = line.slice(0, p).trim();
-    if(!map[key]) continue;
-    out.push({key:map[key], title:key, text:line.slice(p+1).trim()});
-  }
-  return out;
-}
-
-function runTest(map, birthMonth, birthDay, zodiacKey){
-  if(!checkValid(map)){
-    return {ok:false, msg:'答卷无效，请认真作答后重试'};
-  }
-  var pct = normalize(map);
-  var axis = mapToMbtiAxis(pct);
-  var code = getMbtiCode(axis);
-  var item = null;
+function runTest(map,birthMonth,birthDay,zodiacKey){
+  if(!checkValid(map)) return {ok:false,msg:'请完成前 12 题并按真实感受选择；全同答案暂不生成报告喵～'};
+  var scored=scoreAnswers(map),pct=scored.pct;
+  var code=getMbtiCode(mapToMbtiAxis(scored.axes)),item=null;
   for(var i=0;i<mbtiIpMap.length;i++){
-    if(mbtiIpMap[i].code === code){ item = mbtiIpMap[i]; break; }
+    if(mbtiIpMap[i].code===code){item=mbtiIpMap[i];break;}
   }
-  if(!item) return {ok:false, msg:'匹配结果异常，请重试'};
-
-  var answered = countAnswered(map);
-  var isFreeVersion = answered < 30;
-
-  /* 手选星座优先，没选才用生日推算；两者都不影响 MBTI */
-  var zod = null;
-  if(zodiacKey != null && zodiacKey >= 0 && zodiacKey < zodiacConfig.length){
-    zod = zodiacConfig[zodiacKey];
-  }else{
-    zod = getZodiac(birthMonth, birthDay);
-  }
-
-  var modules = isFreeVersion ? [] : parseFullText(item.fullText);
-
+  if(!item) return {ok:false,msg:'匹配结果异常，请重试'};
+  var answered=countAnswered(map),isFreeVersion=answered<30,zod=null;
+  if(typeof zodiacKey==='number' && zodiacKey%1===0 && zodiacKey>=0 && zodiacKey<zodiacConfig.length){
+    zod=zodiacConfig[zodiacKey];
+  }else{zod=getZodiac(birthMonth,birthDay);}
   return {
-    ok:true,
-    isFreeVersion:isFreeVersion,
-    answered:answered,
-    pct:pct,
-    mbti:{
-      code:item.code, name:item.name,
-      mainKey:item.main, subKey:item.sub,
-      main:personalityDict[item.main],
-      sub:personalityDict[item.sub]
-    },
-    freeText:item.freeText,
-    modules:modules,
-    zodiac:zod
+    ok:true,isFreeVersion:isFreeVersion,answered:answered,pct:pct,
+    headline:item.headline,summary:item.summary,traits:describeTraits(scored),
+    axes:AXIS_NAMES.map(function(a){
+      return {key:a.key,left:a.left,right:a.right,value:scored.axes[a.key],
+        balanced:Math.abs(scored.axes[a.key]-50)<=10,observations:scored.axisCounts[a.key]||0};
+    }),
+    mbti:{code:item.code,name:item.name,mainKey:item.main,subKey:item.sub,
+      main:personalityDict[item.main],sub:personalityDict[item.sub]},
+    freeText:item.summary,modules:isFreeVersion?[]:buildModules(item,pct),zodiac:zod
   };
 }
 
-/* 图片替换入口：assets/animals.js 保存透明 PNG 的内嵌数据。
-   更换图片时同步修改该文件的对应动物键名；网页与海报共用同一来源。
-   IP_PARTS 使用 1000×1000 归一化坐标，更换构图后可微调眼睛、耳朵和尾巴区域。 */
+
+
 function getAnimalSource(key){
   if(typeof personalityDict!=='undefined' && personalityDict && personalityDict[key] && personalityDict[key].img){
     return personalityDict[key].img;
@@ -1219,7 +1150,7 @@ var lastResult = null;
 var currentStageHandles = [];
 
 /* 页面路由与本次浏览的答题进度；生日始终选填。 */
-var PROGRESS_KEY='guanji-animal-progress-v1';
+var PROGRESS_KEY='guanji-animal-progress-'+window.GUANJI_CONTENT.version;
 var restoringRoute=false;
 var lastAppliedHash='';
 var posterJob=0;
@@ -1241,15 +1172,18 @@ function restoreProgress(){
     var answers={};
     questionConfig.forEach(function(q){
       var v=saved.answers[q.id];
-      if(typeof v==='number' && v%1===0 && v>=1 && v<=5) answers[q.id]=v;
+      if(validAnswer(q,v)) answers[q.id]=v;
     });
     state.answers=answers;
     state.index=Math.max(0,Math.min(29,parseInt(saved.index,10)||0));
     state.birthMonth=String(saved.birthMonth||'');
     state.birthDay=String(saved.birthDay||'');
-    state.zodiacKey=typeof saved.zodiacKey==='number' && saved.zodiacKey>=0 && saved.zodiacKey<12?saved.zodiacKey:-1;
+    state.zodiacKey=typeof saved.zodiacKey==='number' && saved.zodiacKey%1===0 && saved.zodiacKey>=0 && saved.zodiacKey<12?saved.zodiacKey:-1;
+    if(!/^([1-9]|1[0-2])$/.test(state.birthMonth)) state.birthMonth='';
+    if(!getZodiac(state.birthMonth,state.birthDay)) state.birthDay='';
+    if(state.zodiacKey>=0){state.birthMonth='';state.birthDay='';}
     $('birthMonth').value=state.birthMonth;
-    $('birthDay').value=state.birthDay;
+    syncBirthDays();
     syncZodiacBtn();
     if(countAnswered(answers)>=12 && checkValid(answers)){
       var res=runTest(answers,state.birthMonth,state.birthDay,state.zodiacKey);
@@ -1316,30 +1250,27 @@ function toast(msg, ms){
   toastTimer = setTimeout(function(){ el.classList.remove('show'); }, ms || 1800);
 }
 
-/* ---- 生日下拉 ---- */
+/* ---- 生日下拉：无年份，允许 2 月 29 日；日期随月份更新。 ---- */
+function syncBirthDays(){
+  var dd=$('birthDay'),limit=daysInBirthMonth(state.birthMonth);
+  if(!state.birthMonth || Number(state.birthDay)>limit) state.birthDay='';
+  dd.innerHTML='<option value="">日期</option>';
+  for(var d=1;d<=limit;d++){
+    var o=document.createElement('option');o.value=d;o.textContent=d;dd.appendChild(o);
+  }
+  dd.value=state.birthDay;
+  dd.disabled=!state.birthMonth;
+}
 (function initBirth(){
-  var mm = $('birthMonth'), dd = $('birthDay');
-  var i;
-  for(i=1;i<=12;i++){
-    var o = document.createElement('option');
-    o.value = i; o.textContent = i;
-    mm.appendChild(o);
+  var mm=$('birthMonth'),dd=$('birthDay');
+  for(var m=1;m<=12;m++){
+    var o=document.createElement('option');o.value=m;o.textContent=m;mm.appendChild(o);
   }
-  for(i=1;i<=31;i++){
-    var o2 = document.createElement('option');
-    o2.value = i; o2.textContent = i;
-    dd.appendChild(o2);
-  }
-  mm.onchange = function(){
-    state.birthMonth = mm.value;
-    dropZodiacPick();          /* 改生日 → 手选星座让位 */
-    saveProgress();
+  syncBirthDays();
+  mm.onchange=function(){
+    state.birthMonth=mm.value;syncBirthDays();dropZodiacPick();saveProgress();
   };
-  dd.onchange = function(){
-    state.birthDay = dd.value;
-    dropZodiacPick();
-    saveProgress();
-  };
+  dd.onchange=function(){state.birthDay=dd.value;dropZodiacPick();saveProgress();};
 })();
 
 /* ---- 直接选星座 ---- */
@@ -1379,7 +1310,8 @@ function buildZodiacGrid(){
       var b = document.createElement('button');
       b.type = 'button';
       b.className = 'zs-item' + (state.zodiacKey === idx ? ' on' : '');
-      b.innerHTML = '<i>' + ZODIAC_GLYPH[idx] + '</i><span>' + z.name.replace('座','') + '</span>';
+      b.innerHTML = '<i>' + ZODIAC_GLYPH[idx] + '</i><span>' + z.name.replace('座','') + '</span><small>'+z.range+'</small>';
+      b.setAttribute('aria-label',z.name+' '+z.range);
       b.onclick = function(){ pickZodiac(idx); };
       g.appendChild(b);
     })(ZODIAC_GRID[i]);
@@ -1405,10 +1337,11 @@ function pickZodiac(idx){
   var mm = $('birthMonth'), dd = $('birthDay');
   if(mm) mm.value = '';
   if(dd) dd.value = '';
+  syncBirthDays();
   syncZodiacBtn();
   closeZodiacSheet();
   saveProgress();
-  toast('已选 ' + z.name + '，' + z.desc);
+  toast('已选 '+z.name+' · '+z.range);
 }
 
 (function initZodiacPick(){
@@ -1440,13 +1373,7 @@ function pickZodiac(idx){
 /* =========================================================
    8. 答题
    ========================================================= */
-var OPTIONS = [
-  {val:1, label:'非常不符合'},
-  {val:2, label:'不太符合'},
-  {val:3, label:'一般'},
-  {val:4, label:'比较符合'},
-  {val:5, label:'非常符合'}
-];
+/* 四个具体选项随题目切换，见 questionConfig[].options。 */
 
 function renderQuestion(){
   saveProgress();
@@ -1461,16 +1388,19 @@ function renderQuestion(){
 
   var box = $('optList');
   box.innerHTML = '';
-  for(var i=0;i<OPTIONS.length;i++){
+  for(var i=0;i<q.options.length;i++){
     (function(o){
       var b = document.createElement('button');
       b.className = 'opt';
       b.type = 'button';
       if(state.answers[q.id] === o.val) b.className = 'opt on';
-      b.innerHTML = '<span class="dot"></span><span>'+o.label+'</span>';
+      b.setAttribute('role','radio');
+      b.setAttribute('aria-checked',state.answers[q.id]===o.val?'true':'false');
+      b.innerHTML = '<span class="dot" aria-hidden="true"></span><span class="opt-copy"></span>';
+      b.querySelector('.opt-copy').textContent=o.label;
       b.onclick = function(){ choose(o.val, qIndex); };
       box.appendChild(b);
-    })(OPTIONS[i]);
+    })(q.options[i]);
   }
 
   $('btnPrev').disabled = (state.index === 0);
@@ -1493,11 +1423,14 @@ function choose(val, at){
   if(at != null && at !== state.index) return;
 
   var q = questionConfig[state.index];
+  if(!validAnswer(q,val)) return;
   state.answers[q.id] = val;
   saveProgress();
 
   var opts = $('optList').children;
-  for(var i=0;i<opts.length;i++) opts[i].classList.remove('on');
+  for(var i=0;i<opts.length;i++){
+    opts[i].classList.remove('on');opts[i].setAttribute('aria-checked',i===val-1?'true':'false');
+  }
   if(opts[val - 1]) opts[val - 1].classList.add('on');
 
   $('pbar').style.width = Math.round(countAnswered(state.answers) / 30 * 100) + '%';
@@ -1594,7 +1527,50 @@ function tryShowResult(isFinal){
   showPage('page-result');
 }
 
-var MODULE_ICONS = {trait:'✦', strength:'✧', weakness:'◇', career:'✿', love:'♡'};
+var MODULE_ICONS = {trait:'✨',strength:'💡',weakness:'⚠️',career:'📈',love:'💞'};
+
+/* 12 项特质与四组偏好；文字在 assets/content.js 中维护。 */
+function renderTraits(res){
+  var list=$('traitList');list.innerHTML='';
+  res.traits.forEach(function(t){
+    var card=document.createElement('article');card.className='trait-card';
+    var heading=document.createElement('div');heading.className='trait-heading';
+    var title=document.createElement('h3');title.textContent=t.label;
+    var value=document.createElement('span');value.className='trait-value';
+    value.textContent=t.levelName+' · '+t.value;
+    heading.appendChild(title);heading.appendChild(value);card.appendChild(heading);
+    var meter=document.createElement('div');meter.className='trait-meter';
+    meter.setAttribute('role','meter');meter.setAttribute('aria-label',t.label+'倾向指数');
+    meter.setAttribute('aria-valuemin','0');meter.setAttribute('aria-valuemax','100');
+    meter.setAttribute('aria-valuenow',String(t.value));
+    var fill=document.createElement('i');fill.style.width=t.value+'%';fill.style.background=t.bar;
+    meter.appendChild(fill);card.appendChild(meter);
+    var desc=document.createElement('p');desc.className='trait-desc';desc.textContent=t.desc;card.appendChild(desc);
+    if(!res.isFreeVersion){
+      var tip=document.createElement('p');tip.className='trait-tip';tip.textContent='小建议 · '+t.tip;card.appendChild(tip);
+    }
+    list.appendChild(card);
+  });
+  $('traitNote').textContent=res.isFreeVersion?
+    '当前每项来自 1 道题，是初步画像。继续答题可补充不同情境与小建议。':
+    '每项结合 2 道不同情境题。数值表示倾向强弱，高低没有好坏之分。';
+  var axes=$('axisList');axes.innerHTML='';
+  res.axes.forEach(function(a){
+    var row=document.createElement('div');row.className='axis-row';
+    var labels=document.createElement('div');labels.className='axis-labels';
+    var left=document.createElement('span');left.textContent=a.left+' '+(100-a.value)+'%';
+    var right=document.createElement('span');right.textContent=a.value+'% '+a.right;
+    labels.appendChild(left);labels.appendChild(right);row.appendChild(labels);
+    var rail=document.createElement('div');rail.className='axis-rail';
+    var marker=document.createElement('i');marker.style.left=a.value+'%';rail.appendChild(marker);row.appendChild(rail);
+    var note=document.createElement('p');note.className='axis-note';
+    note.textContent=a.balanced?'两侧接近均衡，类型只是本次选择的归类。':
+      '这次更偏向'+(a.value>50?a.right:a.left)+'，也可以保有另一侧的特点。';
+    row.appendChild(note);axes.appendChild(row);
+  });
+}
+
+
 
 function renderResult(res){
   $('resCode').textContent = res.mbti.code;
@@ -1625,14 +1601,14 @@ function renderResult(res){
   for(var r = 0; r < POSTER_BAR_DIMS.length; r++){
     var dv = dimView(POSTER_BAR_DIMS[r]);
     var pv = (res.pct && res.pct[dv.key] != null) ? res.pct[dv.key] : 50;
-    radarItems.push({label:dv.label, val:pv, color:dv.bar});
+    radarItems.push({label:dv.radarLabel||dv.label,val:pv,color:dv.bar});
   }
   $('radarBox').innerHTML = buildRadarSvg(radarItems);
 
   /* 性格总结：标题层 + 正文层 */
-  $('sumHead').textContent = POSTER_HEADLINE[res.mbti.code] || ('你是' + res.mbti.name);
-  $('sumBody').textContent =
-    firstClauses(res.mbti.main.desc, 2) + '，也' + firstClauses(res.mbti.sub.desc, 2) + '。';
+  $('sumHead').textContent=res.headline;
+  $('sumBody').textContent=res.summary;
+  renderTraits(res);
 
   /* 关键词胶囊 */
   var pills = pickPills(res.pct);
@@ -1695,7 +1671,8 @@ function renderResult(res){
   if(res.zodiac){
     zc.hidden = false;
     $('zodiacMain').textContent = res.zodiac.name + ' · ' + res.zodiac.desc;
-    $('zodiacDesc').textContent = '星座内容仅作趣味参考，不参与人格计算结果喵。';
+    $('zodiacRange').textContent=res.zodiac.range+' · 固定月日趣味分界';
+    $('zodiacDesc').textContent='相处参考 · '+res.zodiac.relation+'\n给你的小提醒 · '+res.zodiac.tip+'\n仅作趣味参考，不参与人格计分；交界日期可在首页手动选择。';
   }else{
     zc.hidden = true;
   }
@@ -1765,19 +1742,27 @@ function roundRect(ctx, x, y, w, h, r){
   ctx.closePath();
 }
 
-function wrapText(ctx, text, x, y, maxW, lh){
-  var line = '';
-  for(var i=0;i<text.length;i++){
-    var ch = text.charAt(i);
-    if(ctx.measureText(line + ch).width > maxW && line){
-      ctx.fillText(line, x, y);
-      y += lh;
-      line = ch;
-    }else{
-      line += ch;
-    }
+/* 测量与绘制共用换行；中文标点不单独落在下一行，左括号不留在行尾。 */
+function textLines(ctx,text,maxW){
+  var lines=[],line='',s=String(text || '');
+  var close=/[，。、！？：；,.!?;:…）】》〉”’」』％%]/;
+  var open=/[（【《〈“‘「『]/;
+  for(var i=0;i<s.length;i++){
+    var ch=s.charAt(i);
+    if(ch==='\n'){lines.push(line);line='';continue;}
+    if(line && ctx.measureText(line+ch).width>maxW){
+      var last=line.charAt(line.length-1);
+      if((close.test(ch)||open.test(last)) && line.length>1){
+        lines.push(line.slice(0,-1));line=last+ch;
+      }else{lines.push(line);line=ch;}
+    }else{line+=ch;}
   }
-  if(line){ ctx.fillText(line, x, y); y += lh; }
+  if(line) lines.push(line);
+  return lines;
+}
+function wrapText(ctx, text, x, y, maxW, lh){
+  var lines=textLines(ctx,text,maxW);
+  for(var i=0;i<lines.length;i++){ctx.fillText(lines[i],x,y);y+=lh;}
   return y;
 }
 
@@ -1791,70 +1776,25 @@ function drawAvatar(ctx,key,cx,cy,r){
   ctx.restore();
 }
 
-var POSTER_HEADLINE = {
-  INTJ:'你是把长远局面都想透的谋略家',
-  INTP:'你是永远在追问为什么的思考者',
-  ENTJ:'你是自带指挥台的行动派',
-  ENTP:'你是点子多到停不下来的探索者',
-  INFJ:'你是温柔又有洞见的引路人',
-  INFP:'你是心里住着一整个宇宙的理想家',
-  ENFJ:'你是天生会点亮别人的领路人',
-  ENFP:'你是自带能量场的行动派',
-  ISTJ:'你是把每件事都做扎实的可靠派',
-  ISFJ:'你是默默照顾所有人的暖炉',
-  ESTJ:'你是把混乱理顺的执行者',
-  ESFJ:'你是让一群人聚在一起的黏合剂',
-  ISTP:'你是话不多但手很稳的实干家',
-  ISFP:'你是活得很有自己味道的生活家',
-  ESTP:'你是敢想敢冲的现场玩家',
-  ESFP:'你是走到哪都能点亮气氛的小太阳'
-};
-
-var DIM_VIEW = [
-  {key:'E',  label:'外向能量', hi:'外向',   lo:'内敛',   bg:'#FFE4EE', fg:'#D9688F', bar:'#FF8FB1'},
-  {key:'S',  label:'情感共感', hi:'共情',   lo:'理性',   bg:'#EDE7FA', fg:'#8468B5', bar:'#A98BD8'},
-  {key:'R',  label:'行动冲劲', hi:'行动力', lo:'求稳',   bg:'#FFEEE2', fg:'#D2833F', bar:'#F2A65E'},
-  {key:'N',  label:'探索欲',   hi:'好奇心', lo:'务实',   bg:'#E3F5EC', fg:'#4E9B76', bar:'#6FC0A0'},
-  {key:'St', label:'情绪稳定', hi:'情绪稳', lo:'细腻',   bg:'#E1F1F7', fg:'#4C8E9E', bar:'#7FC0CE'},
-  {key:'A',  label:'亲和度',   hi:'温柔',   lo:'直率',   bg:'#E4EFFC', fg:'#5A86C4', bar:'#78A6E0'},
-  {key:'P',  label:'坚持度',   hi:'有韧性', lo:'随性',   bg:'#FFF6DE', fg:'#BE9A3A', bar:'#E0BC5C'},
-  {key:'D',  label:'独立度',   hi:'有主见', lo:'爱商量',   bg:'#EFEBF6', fg:'#77709A', bar:'#9C93BE'}
-];
-
-/* 六芒星六轴：从正上方起顺时针 */
-var POSTER_BAR_DIMS = ['E','S','A','St','N','R'];
-
+/* 六轴预览；完整 12 项在特质画像中展示。 */
+var DIM_VIEW=traitConfig;
+var POSTER_BAR_DIMS=['action','stability','empathy','planning','flexibility','stress'];
 function dimView(key){
-  for(var i=0;i<DIM_VIEW.length;i++){ if(DIM_VIEW[i].key === key) return DIM_VIEW[i]; }
+  for(var i=0;i<DIM_VIEW.length;i++) if(DIM_VIEW[i].key===key) return DIM_VIEW[i];
   return DIM_VIEW[0];
 }
-
-/* 取偏离中位最多的 2 高 + 2 低，保证正负都有 */
+/* 胶囊根据实际回答生成，不按人格类型写死，也不强制凑高低组合。 */
 function pickPills(pct){
-  var arr = [];
-  for(var i=0;i<DIM_VIEW.length;i++){
-    var d = DIM_VIEW[i];
-    var v = (pct && pct[d.key] != null) ? pct[d.key] : 50;
-    arr.push({d:d, v:v, dev:Math.abs(v-50)});
-  }
-  var hi = [], lo = [];
-  for(var a=0;a<arr.length;a++){ (arr[a].v >= 50 ? hi : lo).push(arr[a]); }
-  hi.sort(function(x,y){ return y.dev - x.dev; });
-  lo.sort(function(x,y){ return y.dev - x.dev; });
-  var picked = hi.slice(0,2).concat(lo.slice(0,2));
-  if(picked.length < 4){
-    var rest = arr.slice().sort(function(x,y){ return y.dev - x.dev; });
-    for(var b=0;b<rest.length && picked.length<4;b++){
-      if(picked.indexOf(rest[b]) < 0) picked.push(rest[b]);
-    }
-  }
-  var out = [];
-  for(var c=0;c<picked.length;c++){
-    var it = picked[c];
-    out.push({text: it.v >= 50 ? it.d.hi : it.d.lo, bg: it.d.bg, fg: it.d.fg, dev: it.dev});
-  }
-  out.sort(function(x,y){ return y.dev - x.dev; });
-  return out;
+  var specs=[
+    {key:'empathy',hi:'共情',lo:'重逻辑',mid:'会体谅',bg:'#EFE8FA',fg:'#9874BA'},
+    {key:'E',hi:'外向',lo:'内敛',mid:'动静皆宜',bg:'#FFE5EF',fg:'#CD7599'},
+    {key:'sensitivity',hi:'细腻',lo:'松弛',mid:'有感知',bg:'#E4F3F9',fg:'#659CAE'},
+    {key:'risk',hi:'敢试',lo:'求稳',mid:'适度试水',bg:'#FFF2DE',fg:'#BF9955'}
+  ];
+  return specs.map(function(d){
+    var v=pct && pct[d.key]!=null?pct[d.key]:50;
+    return {text:v>=60?d.hi:v<=40?d.lo:d.mid,bg:d.bg,fg:d.fg,dev:Math.abs(v-50)};
+  });
 }
 
 function firstClauses(desc, n){
@@ -1868,14 +1808,7 @@ function firstClauses(desc, n){
 }
 
 function measureWrap(ctx, text, maxW, lh){
-  var line = '', lines = 0;
-  for(var i=0;i<text.length;i++){
-    var ch = text.charAt(i);
-    if(ctx.measureText(line + ch).width > maxW && line){ lines++; line = ch; }
-    else line += ch;
-  }
-  if(line) lines++;
-  return lines * lh;
+  return textLines(ctx,text,maxW).length*lh;
 }
 
 /* 六芒星雷达图 */
@@ -2041,216 +1974,140 @@ function buildRadarSvg(items){
   return s;
 }
 
+/* 先测量全部内容再创建画布，避免完整版、长标题或星座文案被固定高度裁掉。 */
 function buildPoster(res){
-  var W = 750, PAD = 48;
-  var innerW = W - PAD * 2;
-  var C = document.createElement('canvas');
-  C.width = W; C.height = 3200;
-  var ctx = C.getContext('2d');
-  var y = 0;
-
-  /* 背景 */
-  var g = ctx.createLinearGradient(0, 0, W, 3200);
-  g.addColorStop(0, '#FFF2F7');
-  g.addColorStop(0.38, '#F7F4FF');
-  g.addColorStop(1, '#EFFAF6');
-  ctx.fillStyle = g; ctx.fillRect(0, 0, W, 3200);
-
-  var rg = ctx.createRadialGradient(W*0.16, 90, 10, W*0.16, 90, 460);
-  rg.addColorStop(0, 'rgba(255,205,224,.60)');
-  rg.addColorStop(1, 'rgba(255,205,224,0)');
-  ctx.fillStyle = rg; ctx.fillRect(0, 0, W, 700);
-
-  var rg2 = ctx.createRadialGradient(W*0.88, 300, 10, W*0.88, 300, 400);
-  rg2.addColorStop(0, 'rgba(198,228,255,.55)');
-  rg2.addColorStop(1, 'rgba(198,228,255,0)');
-  ctx.fillStyle = rg2; ctx.fillRect(0, 0, W, 780);
-
-  /* ---- 顶部标题 ---- */
-  ctx.textAlign = 'left';
-  ctx.fillStyle = '#3F3949';
-  ctx.font = '800 46px ' + FF_CN;
-  ctx.fillText('观己人格报告', PAD, 106);
-
-  ctx.fillStyle = '#9A90A8';
-  ctx.font = '600 24px ' + FF_CN;
-  ctx.fillText((res.isFreeVersion?'主副双人格简版':'主副双人格完整版') + ' · ' + res.mbti.code, PAD, 152);
-
-  /* 右上气泡：夹在标题与小字之间 */
-  var bubble = res.isFreeVersion ? '主副双人格简版' : '主副双人格完整版';
-  ctx.font = '600 22px ' + FF_CN;
-  var bw = ctx.measureText(bubble).width + 46;
-  var bh = 46;
-  var bxb = W - PAD - bw, byb = 129 - bh / 2;
-  roundRect(ctx, bxb, byb, bw, bh, bh/2);
-  ctx.fillStyle = 'rgba(255,255,255,.94)'; ctx.fill();
-  ctx.strokeStyle = 'rgba(255,190,216,.95)'; ctx.lineWidth = 2; ctx.stroke();
-  ctx.fillStyle = '#D2708F';
-  ctx.textAlign = 'center';
-  ctx.fillText(bubble, bxb + bw/2, byb + bh/2 + 8);
-
-  /* ---- 两个正方形框 ---- */
-  var boxY = 198, boxS = 312, bGap = innerW - boxS * 2;
-  var b1 = PAD, b2 = PAD + boxS + bGap;
-
-  /* 左：拟人动物 + 主副人格标签 */
-  roundRect(ctx, b1, boxY, boxS, boxS, 32);
-  ctx.fillStyle = 'rgba(255,255,255,.88)'; ctx.fill();
-  ctx.strokeStyle = 'rgba(255,214,231,.90)'; ctx.lineWidth = 2; ctx.stroke();
-
-  /* 主人格在左，副人格在右；先画副人格，再画较大的主人格。 */
+  var W=750,PAD=48,innerW=W-PAD*2,bodyW=innerW-56;
+  var canvas=document.createElement('canvas');canvas.width=W;canvas.height=1;
+  var ctx=canvas.getContext('2d');
+  function font(weight,size){ctx.font=weight+' '+size+'px '+FF_CN;}
+  function height(text,size,lineHeight,width,weight){
+    font(weight||400,size);return measureWrap(ctx,text,width||bodyW,lineHeight);
+  }
+  var summary={y:540,head:res.headline,body:res.summary};
+  summary.headH=height(summary.head,30,44,bodyW-32,800);
+  summary.bodyH=height(summary.body,25,40);
+  summary.h=28+summary.headH+24+summary.bodyH+28;
+  var y=summary.y+summary.h+26;
+  var pills=pickPills(res.pct),pillY=y,pillLines=[[]],lineW=0;
+  font(700,24);
+  pills.forEach(function(p){
+    p.width=ctx.measureText(p.text).width+40;
+    if(lineW && lineW+14+p.width>innerW){pillLines.push([]);lineW=0;}
+    pillLines[pillLines.length-1].push(p);lineW+=p.width+(lineW?14:0);
+  });
+  y+=pillLines.length*62+22;
+  var blocks=[];
+  function addText(title,text,kind,extra){
+    var block={title:title,text:text,kind:kind,y:y};
+    if(extra) Object.keys(extra).forEach(function(k){block[k]=extra[k];});
+    block.textH=height(text,24,38);
+    block.tipH=block.tip?height('小建议 · '+block.tip,22,35):0;
+    block.h=28+34+14+block.textH+(block.tipH?12+block.tipH:0)+26;
+    if(kind==='trait') block.h+=18;
+    blocks.push(block);y+=block.h+18;
+  }
+  if(!res.isFreeVersion){
+    res.modules.forEach(function(m){addText(m.title,m.text,'module');});
+  }else{
+    addText('简版初步画像','已完成 '+res.answered+' / 30 题。继续答题可补充不同情境、五部分人格解读与特质小建议。','notice');
+  }
+  var traitHeadingY=y+14;y+=98;
+  res.traits.forEach(function(t){
+    addText(t.label,t.desc,'trait',{value:t.value,levelName:t.levelName,bar:t.bar,
+      tip:res.isFreeVersion?'':t.tip});
+  });
+  var axisHeadingY=y+14;y+=98;
+  var axisY=y;y+=res.axes.length*110+12;
+  if(res.zodiac){
+    var z=res.zodiac;
+    addText('星座趣味参考 · '+z.name+' '+z.range,
+      z.name+' · '+z.desc+' 相处参考：'+z.relation,'zodiac',{tip:z.tip});
+  }
+  var footY=y+24;
+  var H=Math.ceil(footY+100);
+  canvas.height=H;ctx=canvas.getContext('2d');
+  var gradient=ctx.createLinearGradient(0,0,W,H);
+  gradient.addColorStop(0,'#FFF2F7');gradient.addColorStop(.4,'#F7F4FF');gradient.addColorStop(1,'#EFFAF6');
+  ctx.fillStyle=gradient;ctx.fillRect(0,0,W,H);
+  function card(x,top,width,h,tint){
+    roundRect(ctx,x,top,width,h,28);ctx.fillStyle=tint||'rgba(255,255,255,.91)';ctx.fill();
+    ctx.strokeStyle='#EDE2F2';ctx.lineWidth=1.5;ctx.stroke();
+  }
+  function text(s,x,baseline,size,color,weight){
+    font(weight||400,size);ctx.fillStyle=color;ctx.textAlign='left';ctx.fillText(s,x,baseline);
+  }
+  text('观己人格报告',PAD,100,46,'#443B4E',800);
+  text((res.isFreeVersion?'主副双人格简版':'主副双人格完整版')+' · '+res.mbti.code,PAD,149,23,'#A094AF',600);
+  var badge=res.isFreeVersion?'主副双人格简版':'主副双人格完整版';
+  font(600,20);var bw=ctx.measureText(badge).width+32,bx=W-PAD-bw;
+  card(bx,107,bw,42,'#FFFFFF');text(badge,bx+16,135,20,'#D17D9D',600);
+  var boxY=192,boxS=312,b1=PAD,b2=W-PAD-boxS;
+  card(b1,boxY,boxS,boxS);card(b2,boxY,boxS,boxS);
   drawAvatar(ctx,res.mbti.subKey,b1+boxS-76,boxY+119,70);
   drawAvatar(ctx,res.mbti.mainKey,b1+104,boxY+104,96);
-
-  var st1 = IP_STYLE[res.mbti.mainKey] || IP_STYLE.cat;
-  var st2 = IP_STYLE[res.mbti.subKey] || IP_STYLE.cat;
-
-  function tagRow(ty, text, bg, fg){
-    roundRect(ctx, b1 + 22, ty, boxS - 44, 42, 21);
-    ctx.fillStyle = bg; ctx.fill();
-    ctx.fillStyle = fg;
-    ctx.textAlign = 'center';
-    ctx.font = '700 22px ' + FF_CN;
-    ctx.fillText(text, b1 + boxS/2, ty + 28);
+  function tag(ty,label,bg){
+    roundRect(ctx,b1+22,ty,boxS-44,42,21);ctx.fillStyle=bg;ctx.fill();
+    font(700,22);ctx.fillStyle='#6E5460';ctx.textAlign='center';ctx.fillText(label,b1+boxS/2,ty+28);
   }
-  tagRow(boxY + 200, '主人格 · ' + res.mbti.main.name, st1.fur, '#6E5460');
-  tagRow(boxY + 250, '副人格 · ' + res.mbti.sub.name, st2.fur2, '#5E4E62');
-
-  /* 右：六芒星维度图 */
-  roundRect(ctx, b2, boxY, boxS, boxS, 32);
-  ctx.fillStyle = 'rgba(255,255,255,.88)'; ctx.fill();
-  ctx.strokeStyle = 'rgba(214,226,255,.90)'; ctx.stroke();
-
-  ctx.textAlign = 'left';
-  ctx.fillStyle = '#8A82A0';
-  ctx.font = '700 20px ' + FF_CN;
-  ctx.fillText('人格维度', b2 + 24, boxY + 36);
-
-  var radarItems = [];
-  for(var i=0;i<POSTER_BAR_DIMS.length;i++){
-    var dv = dimView(POSTER_BAR_DIMS[i]);
-    radarItems.push({
-      label: dv.label,
-      val: (res.pct && res.pct[dv.key] != null) ? res.pct[dv.key] : 50,
-      color: dv.bar
+  var st1=IP_STYLE[res.mbti.mainKey]||IP_STYLE.cat,st2=IP_STYLE[res.mbti.subKey]||IP_STYLE.cat;
+  tag(boxY+200,'主人格 · '+res.mbti.main.name,st1.fur);
+  tag(boxY+250,'副人格 · '+res.mbti.sub.name,st2.fur2);
+  text('人格维度',b2+24,boxY+35,20,'#8D7C9B',700);
+  var radarItems=POSTER_BAR_DIMS.map(function(k){var d=dimView(k);return {
+    label:d.radarLabel||d.label,val:res.pct[k],color:d.bar
+  };});
+  drawRadar(ctx,b2+boxS/2,boxY+179,70,radarItems);
+  card(PAD,summary.y,innerW,summary.h);
+  roundRect(ctx,PAD+18,summary.y+18,innerW-36,summary.headH+20,20);ctx.fillStyle='#FFF0F6';ctx.fill();
+  font(800,30);ctx.textAlign='left';ctx.fillStyle='#CE7699';
+  wrapText(ctx,summary.head,PAD+44,summary.y+50,bodyW-32,44);
+  font(400,25);ctx.fillStyle='#70607C';
+  wrapText(ctx,summary.body,PAD+28,summary.y+28+summary.headH+24+25,bodyW,40);
+  pillLines.forEach(function(line,idx){
+    var total=line.reduce(function(a,p){return a+p.width;},0)+14*(line.length-1),x=(W-total)/2;
+    line.forEach(function(p){
+      roundRect(ctx,x,pillY+idx*62,p.width,46,23);ctx.fillStyle=p.bg;ctx.fill();
+      font(700,24);ctx.fillStyle=p.fg;ctx.textAlign='center';ctx.fillText(p.text,x+p.width/2,pillY+idx*62+31);
+      x+=p.width+14;
     });
-  }
-
-  drawRadar(ctx, b2 + boxS/2, boxY + 180, 74, radarItems);
-
-  /* ---- 性格总结 ---- */
-  var head = POSTER_HEADLINE[res.mbti.code] || ('你是' + res.mbti.name);
-  var lineA = firstClauses(res.mbti.main.desc, 2);
-  var lineB = firstClauses(res.mbti.sub.desc, 2);
-  var body = lineA + '，也' + lineB + '。';
-
-  var cardX = PAD, cardW = innerW, ipd = 32;
-  var cardY = boxY + boxS + 30;
-
-  ctx.font = '400 25px ' + FF_CN;
-  var bodyH = measureWrap(ctx, body, cardW - ipd * 2, 42);
-  var headH = 54;
-  var cardH = ipd + headH + 20 + bodyH + 30;
-
-  roundRect(ctx, cardX, cardY, cardW, cardH, 28);
-  ctx.fillStyle = 'rgba(255,255,255,.90)'; ctx.fill();
-  ctx.strokeStyle = 'rgba(236,224,246,.95)'; ctx.lineWidth = 2; ctx.stroke();
-
-  ctx.textAlign = 'left';
-  ctx.font = '800 30px ' + FF_CN;
-  var hw = ctx.measureText(head).width + 44;
-  if(hw > cardW - ipd * 2) hw = cardW - ipd * 2;
-  roundRect(ctx, cardX + ipd, cardY + ipd, hw, headH, 27);
-  ctx.fillStyle = '#FFF0F6'; ctx.fill();
-
-  ctx.fillStyle = '#D2708F';
-  ctx.fillText(head, cardX + ipd + 22, cardY + ipd + 37);
-
-  ctx.fillStyle = '#5F5872';
-  ctx.font = '400 25px ' + FF_CN;
-  wrapText(ctx, body, cardX + ipd, cardY + ipd + headH + 20 + 30, cardW - ipd * 2, 42);
-
-  /* ---- 关键词胶囊 ---- */
-  var pills = pickPills(res.pct);
-  var py2 = cardY + cardH + 30;
-  var pillH = 48, pgap = 16;
-
-  ctx.font = '700 24px ' + FF_CN;
-  var widths = [], totalW = 0;
-  for(var p=0;p<pills.length;p++){
-    var tw = ctx.measureText(pills[p].text).width + 46;
-    widths.push(tw); totalW += tw;
-  }
-  totalW += pgap * Math.max(0, pills.length - 1);
-
-  var pcx = W/2 - totalW/2;
-  for(var q=0;q<pills.length;q++){
-    roundRect(ctx, pcx, py2, widths[q], pillH, pillH/2);
-    ctx.fillStyle = pills[q].bg; ctx.fill();
-    ctx.strokeStyle = 'rgba(255,255,255,.90)'; ctx.lineWidth = 2; ctx.stroke();
-    ctx.textAlign = 'center';
-    ctx.font = '700 24px ' + FF_CN;
-    ctx.fillStyle = pills[q].fg;
-    ctx.fillText(pills[q].text, pcx + widths[q]/2, py2 + 32);
-    pcx += widths[q] + pgap;
-  }
-
-  y = py2 + pillH + 40;
-
-  /* ---- 完整版五个模块 ---- */
-  var mods = res.isFreeVersion ? [] : res.modules;
-  ctx.textAlign = 'left';
-
-  for(var mi=0;mi<mods.length;mi++){
-    var m = mods[mi];
-    ctx.fillStyle = '#D2708F';
-    ctx.font = '700 26px ' + FF_CN;
-    ctx.fillText(m.title, PAD, y);
-
-    ctx.fillStyle = 'rgba(255,190,216,.80)';
-    roundRect(ctx, PAD, y + 10, 52, 5, 3); ctx.fill();
-    y += 44;
-
-    ctx.fillStyle = '#5F5872';
-    ctx.font = '400 25px ' + FF_CN;
-    y = wrapText(ctx, m.text, PAD, y, innerW, 42);
-    y += 18;
-  }
-
-  /* ---- 星座 ---- */
-  if(res.zodiac){
-    y += 12;
-    roundRect(ctx, PAD, y - 26, innerW, 132, 26);
-    ctx.fillStyle = 'rgba(255,244,249,.92)'; ctx.fill();
-    ctx.strokeStyle = 'rgba(255,214,231,.85)'; ctx.lineWidth = 2; ctx.stroke();
-
-    ctx.textAlign = 'left';
-    ctx.fillStyle = '#B08FB8';
-    ctx.font = '500 21px ' + FF_CN;
-    ctx.fillText('星座趣味参考', PAD + 28, y + 16);
-
-    ctx.fillStyle = '#6F6784';
-    ctx.font = '700 27px ' + FF_CN;
-    ctx.fillText(res.zodiac.name + ' · ' + res.zodiac.desc, PAD + 28, y + 60);
-    y += 132;
-  }
-
-  /* ---- 底部 ---- */
-  y += 36;
-  ctx.textAlign = 'center';
-  ctx.fillStyle = '#B8A9C7';
-  ctx.font = '500 23px ' + FF_CN;
-  ctx.fillText('长按保存 · 测测你心里住着哪只小动物', W/2, y);
-  y += 52;
-
-  /* ---- 裁剪 ---- */
-  var usedH = Math.min(Math.ceil(y), 3200);
-  var OUT = document.createElement('canvas');
-  OUT.width = W;
-  OUT.height = usedH;
-  OUT.getContext('2d').drawImage(C, 0, 0, W, usedH, 0, 0, W, usedH);
-  return OUT;
+  });
+  blocks.forEach(function(b){
+    card(PAD,b.y,innerW,b.h,b.kind==='zodiac'?'#FFF7FB':null);
+    text(b.title,PAD+28,b.y+49,b.kind==='zodiac'?23:26,'#B277A2',700);
+    if(b.kind==='trait'){
+      var val=b.levelName+' · '+b.value;font(500,21);ctx.textAlign='right';ctx.fillStyle='#AA94B6';
+      ctx.fillText(val,W-PAD-28,b.y+48);
+      roundRect(ctx,PAD+28,b.y+65,bodyW,7,3);ctx.fillStyle='#F2ECF6';ctx.fill();
+      if(b.value){roundRect(ctx,PAD+28,b.y+65,bodyW*b.value/100,7,3);ctx.fillStyle=b.bar;ctx.fill();}
+    }
+    ctx.textAlign='left';font(400,24);ctx.fillStyle='#70607C';
+    var by=b.y+28+34+14+(b.kind==='trait'?18:0)+24;
+    wrapText(ctx,b.text,PAD+28,by,bodyW,38);
+    if(b.tipH){
+      font(400,22);ctx.fillStyle='#AC8EA6';
+      wrapText(ctx,'小建议 · '+b.tip,PAD+28,by+b.textH+12,bodyW,35);
+    }
+  });
+  text('12 项特质画像',PAD,traitHeadingY+24,29,'#7A628E',800);
+  text(res.isFreeVersion?'每项来自 1 道题 · 初步观察':'数值代表倾向强弱 · 高低没有好坏',PAD,traitHeadingY+61,21,'#A291AF');
+  text('四组人格偏好',PAD,axisHeadingY+24,29,'#7A628E',800);
+  text('两侧接近时，类型只作本次选择的归类',PAD,axisHeadingY+61,21,'#A291AF');
+  res.axes.forEach(function(a,i){
+    var ay=axisY+i*110;
+    text(a.left+' '+(100-a.value)+'%',PAD+12,ay+21,22,'#8E789F',600);
+    font(600,22);ctx.fillStyle='#8E789F';ctx.textAlign='right';ctx.fillText(a.value+'% '+a.right,W-PAD-12,ay+21);
+    roundRect(ctx,PAD+12,ay+39,innerW-24,8,4);ctx.fillStyle='#E8DCEC';ctx.fill();
+    var mx=PAD+12+(innerW-24)*a.value/100;
+    ctx.beginPath();ctx.arc(mx,ay+43,8,0,Math.PI*2);ctx.fillStyle='#C595BE';ctx.fill();
+    text(a.balanced?'两侧接近均衡':'这次更偏向'+(a.value>50?a.right:a.left),PAD+12,ay+81,20,'#AC9BB7');
+  });
+  font(400,21);ctx.fillStyle='#A89AB5';ctx.textAlign='center';
+  ctx.fillText('趣味自我探索 · 结果来自本次选择，不定义完整的你',W/2,footY+12);
+  if(res.zodiac) ctx.fillText('星座按固定月日匹配，仅作趣味参考，不参与人格计分',W/2,footY+48);
+  ctx.fillText('长按保存 · 观己人格动物图鉴',W/2,footY+83);
+  return canvas;
 }
+
 
 /* 海报使用与页面一致的透明 PNG，先等待图片完成加载，再生成真实图片。
    内嵌图片数据可避免直接打开本地 HTML 时 Canvas 图片导出受来源限制。 */
@@ -2321,7 +2178,8 @@ applyRoute(true);
 /* 调试出口（可删，不影响功能） */
 window.__ZOO__ = {
   runTest:runTest, normalize:normalize, getZodiac:getZodiac, checkValid:checkValid,
-  questionConfig:questionConfig, mbtiIpMap:mbtiIpMap, buildIpSvg:buildIpSvg,
+  questionConfig:questionConfig,mbtiIpMap:mbtiIpMap,traitConfig:traitConfig,zodiacConfig:zodiacConfig,
+  scoreAnswers:scoreAnswers,progressKey:PROGRESS_KEY,renderResult:renderResult,buildIpSvg:buildIpSvg,
   buildPoster:buildPoster, pickPills:pickPills, preloadAnimals:preloadAnimals,
   state:function(){ return state; }
 };
