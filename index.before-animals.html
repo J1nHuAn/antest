@@ -1,0 +1,2359 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=no,viewport-fit=cover">
+<meta name="format-detection" content="telephone=no,email=no,address=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#FFF2F6">
+<title>人格动物图鉴</title>
+<style>
+/* ====== 主题色（改这里即可整体换肤） ====== */
+:root{
+  --grad-main:linear-gradient(135deg,#FFB6C9 0%,#FF9EC4 48%,#FFA9B8 100%);
+  --grad-text:linear-gradient(120deg,#FF9EC4,#FFB98A 55%,#9ED6C0);
+  --c-accent:#FF8FB1;
+  --c-ink:#4A4453;
+  --c-sub:#6F6784;
+  --c-mute:#9A90A8;
+  --c-line:rgba(180,170,200,.42);
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html{font-size:13.33333vw;}
+@media (min-width:750px){html{font-size:100px;}}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Helvetica Neue","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  color:#4A4453;
+  background:linear-gradient(170deg,#FFF2F6 0%,#F5F8FF 36%,#EFFBF5 68%,#FFF8EF 100%);
+  background-attachment:fixed;
+  min-height:100vh;overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+  -webkit-text-size-adjust:100%;
+}
+.app{max-width:750px;margin:0 auto;min-height:100vh;position:relative;}
+.page{display:none;padding:.34rem .30rem .7rem;}
+.page.active{display:block;animation:fadeUp .38s cubic-bezier(.22,.9,.3,1);}
+@keyframes fadeUp{from{opacity:.45;transform:translateY(.16rem)}to{opacity:1;transform:translateY(0)}}
+
+/* ============ 通用按钮 ============ */
+.btn-primary{
+  display:block;width:100%;border:0;outline:0;
+  height:.96rem;border-radius:.48rem;
+  font-size:.30rem;font-weight:600;letter-spacing:.02rem;color:#fff;
+  background:var(--grad-main);
+  box-shadow:0 .1rem .3rem rgba(255,140,175,.36);
+  transition:transform .16s ease,box-shadow .16s ease;
+}
+.btn-primary:active{transform:scale(.97);box-shadow:0 .04rem .16rem rgba(255,140,175,.4);}
+.btn-ghost{
+  display:block;width:100%;border:0;outline:0;background:transparent;
+  height:.86rem;border-radius:.43rem;font-size:.28rem;color:#8A819C;
+  border:.02rem solid rgba(180,170,200,.42);
+  transition:transform .16s ease,background .16s ease;
+}
+.btn-ghost:active{transform:scale(.97);background:rgba(255,255,255,.7);}
+
+/* 简版结果页：继续答题（主） / 生成海报（降级为描边） */
+.btn-resume{
+  display:flex;align-items:center;justify-content:center;gap:.1rem;
+  width:100%;border:0;outline:0;
+  height:1rem;border-radius:.5rem;
+  font-size:.31rem;font-weight:700;letter-spacing:.02rem;color:#fff;font-family:inherit;
+  background:linear-gradient(135deg,#FF9EC4 0%,#FF8FB1 52%,#FFA9B8 100%);
+  box-shadow:0 .1rem .3rem rgba(255,140,175,.42);
+  transition:transform .16s ease,box-shadow .16s ease;
+}
+.btn-resume:active{transform:scale(.97);box-shadow:0 .04rem .16rem rgba(255,140,175,.45);}
+.btn-resume[hidden]{display:none;}
+.btn-resume .arrow{font-size:.34rem;line-height:1;opacity:.85;transform:translateY(-.01rem);}
+@keyframes resumeIn{from{opacity:.5;transform:translateY(.14rem)}to{opacity:1;transform:translateY(0)}}
+.btn-resume:not([hidden]){animation:resumeIn .42s cubic-bezier(.3,.9,.35,1);}
+.res-actions.is-free #btnPoster{
+  height:.86rem;border-radius:.43rem;
+  background:#fff;color:#C2708F;
+  border:.02rem solid #FFD7E5;
+  box-shadow:0 .06rem .18rem rgba(178,164,204,.16);
+  font-size:.27rem;
+}
+
+/* ============ 首页 ============ */
+#page-welcome{position:relative;padding-top:1.02rem;overflow:hidden;}
+.welcome-deco{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:0;}
+.welcome-deco i{position:absolute;border-radius:50%;filter:blur(.05rem);opacity:.55;animation:float 7s ease-in-out infinite;}
+.welcome-deco i:nth-child(1){width:2.2rem;height:2.2rem;left:-.6rem;top:.3rem;background:#FFD6E4;}
+.welcome-deco i:nth-child(2){width:1.5rem;height:1.5rem;right:-.3rem;top:1.5rem;background:#CFE8FF;animation-delay:1.1s;}
+.welcome-deco i:nth-child(3){width:1.7rem;height:1.7rem;right:.8rem;top:-.5rem;background:#DAF3E4;animation-delay:2.2s;}
+.welcome-deco i:nth-child(4){width:1.05rem;height:1.05rem;left:.6rem;top:4.5rem;background:#FFE9C4;animation-delay:.6s;}
+@keyframes float{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-.2rem) scale(1.06)}}
+
+.welcome-head{position:relative;z-index:1;text-align:center;}
+.welcome-kicker{
+  display:inline-block;font-size:.21rem;color:#B08FB8;letter-spacing:.06rem;
+  background:rgba(255,255,255,.72);border:.02rem solid rgba(214,190,225,.5);
+  padding:.07rem .24rem;border-radius:.3rem;
+}
+.welcome-title{
+  margin-top:.28rem;font-size:.66rem;line-height:1.24;font-weight:800;
+  color:#4A4453;letter-spacing:.01rem;
+}
+.welcome-title em{
+  font-style:normal;
+  background:var(--grad-text);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.welcome-sub{margin-top:.2rem;font-size:.25rem;color:#948BA4;line-height:1.7;}
+
+.preview-row{display:flex;justify-content:center;align-items:flex-end;gap:.22rem;margin:.5rem 0 .46rem;position:relative;z-index:1;}
+.preview-cell{width:1.5rem;height:1.5rem;display:flex;align-items:center;justify-content:center;}
+.preview-cell:nth-child(1){animation:bob 4.2s ease-in-out infinite;}
+.preview-cell:nth-child(2){width:1.86rem;height:1.86rem;animation:bob 4.2s ease-in-out infinite .5s;}
+.preview-cell:nth-child(3){animation:bob 4.2s ease-in-out infinite 1s;}
+.preview-cell svg{width:100%;height:100%;display:block;}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-.11rem)}}
+
+.birth-card{
+  position:relative;z-index:1;
+  background:rgba(255,255,255,.82);
+  border-radius:.28rem;padding:.24rem .26rem;
+  box-shadow:0 .06rem .26rem rgba(178,164,204,.14);
+  margin-bottom:.34rem;
+}
+.birth-row{display:flex;align-items:center;justify-content:space-between;}
+.birth-label{font-size:.25rem;color:#6F6784;}
+.birth-label small{display:block;font-size:.19rem;color:#B3AAC0;margin-top:.05rem;}
+.birth-selects{display:flex;gap:.12rem;align-items:center;}
+.birth-selects select{
+  appearance:none;-webkit-appearance:none;border:0;outline:0;
+  background:rgba(255,242,246,.9);
+  color:#6F6784;font-size:.24rem;
+  height:.58rem;padding:0 .2rem;border-radius:.29rem;
+  font-family:inherit;
+  background-image:none;
+}
+.birth-selects span{font-size:.22rem;color:#B3AAC0;}
+
+/* 直接选星座 */
+.zodiac-btn{
+  width:100%;height:.8rem;margin-top:.2rem;
+  display:flex;align-items:center;justify-content:center;gap:.1rem;
+  background:#fff;border:.02rem solid #FFD7E5;border-radius:.4rem;
+  font-size:.24rem;font-weight:600;color:#C2708F;
+  font-family:inherit;cursor:pointer;
+  transition:background .2s,border-color .2s,color .2s;
+}
+.zodiac-btn:active{transform:scale(.985);}
+.zodiac-btn .zb-star{color:#FF8FB1;font-size:.26rem;line-height:1;}
+.zodiac-btn .zb-arrow{color:#E9C0D2;font-size:.26rem;line-height:1;}
+.zodiac-btn.picked{
+  background:linear-gradient(135deg,#FFF0F6,#FFE3EF);
+  border-color:#FFBED8;color:#B8557E;
+}
+.zodiac-btn.picked .zb-star{color:#E56A9B;}
+
+/* 星座选择面板 */
+.zodiac-layer{position:fixed;inset:0;z-index:800;display:flex;align-items:flex-end;}
+.zodiac-layer[hidden]{display:none;}
+.zodiac-mask{position:absolute;inset:0;background:rgba(74,68,83,.44);}
+.zodiac-sheet{
+  position:relative;width:100%;max-width:7.5rem;margin:0 auto;
+  background:#FFFBFD;border-radius:.4rem .4rem 0 0;
+  padding:.34rem .3rem calc(.28rem + env(safe-area-inset-bottom,0px));
+  box-shadow:0 -.08rem .4rem rgba(120,100,140,.2);
+  animation:sheetUp .3s cubic-bezier(.22,1,.36,1);
+}
+@keyframes sheetUp{from{transform:translateY(34%);opacity:.55}to{transform:translateY(0);opacity:1}}
+.zs-title{font-size:.32rem;font-weight:800;color:#3F3949;text-align:center;}
+.zs-sub{margin-top:.08rem;font-size:.22rem;color:#A79DB6;text-align:center;}
+.zs-grid{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:.16rem;
+  margin-top:.3rem;
+}
+.zs-item{
+  height:1rem;border-radius:.24rem;
+  background:#fff;border:.02rem solid #EFE4F3;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  font-family:inherit;cursor:pointer;padding:0;
+  transition:background .18s,border-color .18s;
+}
+.zs-item i{font-size:.3rem;font-style:normal;color:#C08FD6;line-height:1.1;}
+.zs-item span{font-size:.2rem;color:#6F6784;margin-top:.03rem;line-height:1;}
+.zs-item.on{background:linear-gradient(135deg,#FFF0F6,#FFE3EF);border-color:#FFBED8;}
+.zs-item.on i{color:#FF8FB1;}
+.zs-item.on span{color:#B8557E;font-weight:700;}
+.zs-actions{margin-top:.26rem;}
+.zs-clear{
+  width:100%;height:.84rem;border-radius:.42rem;
+  background:#fff;border:.02rem solid #E8DDF0;
+  font-size:.25rem;color:#8A82A0;font-family:inherit;cursor:pointer;
+}
+
+.welcome-foot{position:relative;z-index:1;text-align:center;margin-top:.26rem;font-size:.21rem;color:#B3AAC0;line-height:1.7;}
+
+/* ============ 答题页 ============ */
+.quiz-top{display:flex;align-items:center;gap:.2rem;height:.66rem;margin-top:.16rem;}
+.icon-btn{
+  width:.56rem;height:.56rem;flex:0 0 auto;border:0;outline:0;border-radius:50%;
+  background:rgba(255,255,255,.88);
+  box-shadow:0 .04rem .16rem rgba(178,164,204,.18);
+  font-size:.32rem;line-height:1;color:#8A819C;
+  display:flex;align-items:center;justify-content:center;padding-bottom:.04rem;
+}
+.icon-btn:active{transform:scale(.94);}
+.quiz-progress{flex:1;min-width:0;}
+.bar{height:.14rem;border-radius:.07rem;background:rgba(255,255,255,.9);overflow:hidden;
+  box-shadow:inset 0 0 .02rem rgba(190,178,214,.3);}
+.bar>i{
+  display:block;height:100%;width:0%;border-radius:.07rem;
+  background:linear-gradient(90deg,#FFC6D8,#FFA6C8 55%,#FFB98A);
+  transition:width .34s cubic-bezier(.3,.9,.35,1);
+}
+.quiz-count{margin-top:.09rem;font-size:.2rem;color:#A79DB6;text-align:right;letter-spacing:.02rem;}
+.quiz-count b{color:#FF8FB1;font-weight:700;font-size:.22rem;}
+/* 简版报告入口：放在导航下方，通栏醒目 */
+.quick-wrap{
+  margin:.34rem 0 .1rem;
+  padding:.28rem .28rem .26rem;
+  border-radius:.3rem;
+  background:linear-gradient(180deg,#FFF7FB 0%,#FFEDF4 100%);
+  border:.015rem solid #FFD7E5;
+  box-shadow:0 .1rem .3rem rgba(255,150,190,.14);
+  text-align:center;
+}
+.quick-wrap[hidden]{display:none;}
+@keyframes quickIn{from{opacity:.45;transform:translateY(.12rem)}to{opacity:1;transform:translateY(0)}}
+.quick-wrap:not([hidden]){animation:quickIn .36s cubic-bezier(.3,.9,.35,1);}
+.quick-hint{font-size:.24rem;line-height:1.55;color:#B0728C;letter-spacing:.01rem;}
+.quick-btn{
+  display:block;width:100%;height:.9rem;margin-top:.22rem;
+  border:0;outline:0;border-radius:.45rem;
+  background:var(--grad-main);color:#fff;
+  font-size:.3rem;font-weight:600;letter-spacing:.02rem;font-family:inherit;
+  box-shadow:0 .1rem .24rem rgba(255,140,180,.36);
+  transform:translateZ(0);
+}
+.quick-btn:active{transform:scale(.97);}
+.quick-sub{margin-top:.16rem;font-size:.21rem;color:#BAAABF;letter-spacing:.01rem;}
+
+.q-card{
+  margin-top:.42rem;
+  background:rgba(255,255,255,.92);
+  border-radius:.34rem;
+  padding:.42rem .34rem .46rem;
+  box-shadow:0 .1rem .4rem rgba(178,164,204,.16);
+  min-height:2.3rem;
+  display:flex;flex-direction:column;justify-content:center;
+  position:relative;overflow:hidden;
+}
+.q-card::after{
+  content:"";position:absolute;width:1.5rem;height:1.5rem;border-radius:50%;
+  right:-.5rem;top:-.6rem;background:radial-gradient(circle,rgba(255,214,228,.6),rgba(255,214,228,0) 70%);
+}
+.q-index{font-size:.2rem;color:#C6B9D8;letter-spacing:.06rem;margin-bottom:.16rem;}
+.q-text{font-size:.34rem;line-height:1.6;font-weight:600;color:#4A4453;position:relative;z-index:1;}
+
+.opt-list{margin-top:.3rem;display:flex;flex-direction:column;gap:.17rem;}
+.opt{
+  display:flex;align-items:center;
+  border:0;outline:0;width:100%;text-align:left;
+  background:rgba(255,255,255,.82);
+  border-radius:.24rem;
+  padding:.26rem .26rem;
+  font-size:.27rem;color:#5F5872;
+  box-shadow:0 .04rem .18rem rgba(178,164,204,.1);
+  transition:transform .14s ease,background .18s ease,box-shadow .18s ease,color .18s ease;
+  font-family:inherit;
+}
+.opt .dot{
+  width:.34rem;height:.34rem;border-radius:50%;flex:0 0 auto;margin-right:.22rem;
+  border:.03rem solid rgba(196,184,216,.55);
+  position:relative;transition:all .18s ease;
+}
+.opt .dot::after{
+  content:"";position:absolute;left:50%;top:50%;width:.14rem;height:.14rem;
+  border-radius:50%;background:#FF8FB1;transform:translate(-50%,-50%) scale(0);
+  transition:transform .18s cubic-bezier(.3,1.4,.5,1);
+}
+.opt:active{transform:scale(.985);}
+.opt.on{
+  background:linear-gradient(135deg,rgba(255,236,242,.96),rgba(255,246,238,.96));
+  color:#D9678F;font-weight:600;
+  box-shadow:0 .06rem .22rem rgba(255,150,185,.26);
+}
+.opt.on .dot{border-color:#FF9EC4;background:rgba(255,255,255,.9);}
+.opt.on .dot::after{transform:translate(-50%,-50%) scale(1);}
+
+.quiz-nav{display:flex;gap:.2rem;margin-top:.42rem;}
+.nav-btn{
+  flex:1;border:0;outline:0;height:.84rem;border-radius:.42rem;
+  font-size:.27rem;font-family:inherit;
+  background:rgba(255,255,255,.9);color:#8A819C;
+  box-shadow:0 .05rem .18rem rgba(178,164,204,.14);
+  transition:transform .14s ease,opacity .2s ease;
+}
+.nav-btn:active{transform:scale(.97);}
+.nav-btn.primary{
+  color:#fff;font-weight:600;
+  background:var(--grad-main);
+  box-shadow:0 .08rem .26rem rgba(255,140,175,.34);
+}
+.nav-btn[disabled]{opacity:.42;box-shadow:none;}
+
+/* ============ 结果页 ============ */
+
+/* ===== 结果页：海报同款版式 ===== */
+.res-top{display:flex;align-items:center;justify-content:space-between;gap:.2rem;margin-top:.06rem;}
+.res-title{font-size:.44rem;font-weight:800;color:#3F3949;}
+.res-sub{margin-top:.12rem;font-size:.23rem;color:#9A90A8;font-weight:600;}
+.res-sub b{color:#4A4453;font-weight:800;}
+.res-badge{
+  flex:0 0 auto;white-space:nowrap;
+  font-size:.2rem;font-weight:700;color:#D2708F;
+  background:rgba(255,255,255,.94);
+  border:.02rem solid #FFBED8;border-radius:.23rem;
+  padding:.1rem .2rem;
+  box-shadow:0 .04rem .16rem rgba(255,150,190,.18);
+}
+
+.res-duo{display:flex;align-items:flex-start;gap:.3rem;margin-top:.3rem;}
+.duo-card{
+  flex:0 0 auto;width:calc(50% - .15rem);min-width:0;height:auto;aspect-ratio:1/1;border-radius:.32rem;
+  background:rgba(255,255,255,.88);
+  border:.02rem solid rgba(255,214,231,.9);
+  box-shadow:0 .08rem .3rem rgba(178,164,204,.15);
+  position:relative;overflow:hidden;
+}
+.duo-radar{border-color:rgba(214,226,255,.9);padding:.18rem .1rem .06rem;display:flex;flex-direction:column;}
+.radar-title{font-size:.19rem;font-weight:700;color:#8A82A0;padding-left:.14rem;}
+.radar-box{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;}
+.radar-box svg{width:100%;height:100%;display:block;overflow:visible;}
+
+.ip-stage{transform-origin:50% 88%;}
+.ip-stage.pop{animation:ipPop .95s cubic-bezier(.34,1.42,.5,1) 1;}
+@keyframes ipPop{
+  0%{transform:scale(.38)}
+  58%{transform:scale(1.09)}
+  80%{transform:scale(.975)}
+  100%{transform:scale(1)}
+}
+.duo-ip .ip-stage{position:absolute;width:auto;height:auto;margin:0;}
+.duo-ip .ip-main{left:11%;top:1%;width:66%;height:66%;z-index:2;}
+.duo-ip .ip-mini{right:5%;bottom:27%;width:42%;height:42%;z-index:1;}
+.duo-tags{position:absolute;left:.14rem;right:.14rem;bottom:.14rem;display:flex;flex-direction:column;gap:.08rem;z-index:3;}
+.duo-tag{
+  height:.44rem;line-height:.44rem;border-radius:.22rem;
+  text-align:center;font-size:.2rem;font-weight:700;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  box-shadow:0 .02rem .1rem rgba(120,100,140,.1);
+}
+
+.res-summary{
+  margin-top:.3rem;padding:.28rem;
+  background:rgba(255,255,255,.9);border-radius:.28rem;
+  border:.02rem solid rgba(236,224,246,.95);
+  box-shadow:0 .06rem .24rem rgba(178,164,204,.13);
+}
+.sum-head{
+  display:inline-block;
+  font-size:.28rem;font-weight:800;color:#D2708F;
+  background:#FFF0F6;border-radius:.26rem;
+  padding:.11rem .22rem;line-height:1.4;
+}
+.sum-body{margin-top:.18rem;font-size:.25rem;line-height:1.78;color:#5F5872;}
+
+.res-pills{display:flex;flex-wrap:wrap;justify-content:center;gap:.16rem;margin-top:.28rem;}
+.res-pills .pill{
+  font-size:.24rem;font-weight:700;
+  padding:.1rem .24rem;border-radius:.24rem;
+  border:.02rem solid rgba(255,255,255,.92);
+  box-shadow:0 .04rem .14rem rgba(178,164,204,.14);
+}
+.ip-emoji{
+  position:absolute;left:50%;bottom:.5rem;font-size:.34rem;pointer-events:none;
+  animation:emojiUp .9s ease-out forwards;
+}
+@keyframes emojiUp{
+  0%{opacity:0;transform:translate(-50%,.2rem) scale(.6)}
+  30%{opacity:1}
+  100%{opacity:0;transform:translate(-50%,-1rem) scale(1.15)}
+}
+
+.module-list{margin-top:.34rem;display:flex;flex-direction:column;gap:.18rem;}
+.module{
+  background:rgba(255,255,255,.88);
+  border-radius:.28rem;
+  padding:.28rem .28rem .3rem;
+  box-shadow:0 .06rem .24rem rgba(178,164,204,.13);
+  display:flex;gap:.22rem;
+}
+.module .m-icon{
+  flex:0 0 auto;width:.56rem;height:.56rem;border-radius:.2rem;
+  display:flex;align-items:center;justify-content:center;
+  font-size:.28rem;
+  background:linear-gradient(135deg,#FFE3EC,#EAF3FF);
+  color:#E58BAF;
+}
+.module .m-body{flex:1;min-width:0;}
+.module .m-title{font-size:.24rem;font-weight:700;color:#6F6784;letter-spacing:.02rem;}
+.module .m-text{margin-top:.1rem;font-size:.25rem;line-height:1.78;color:#5F5872;}
+
+.zodiac-card{
+  margin-top:.26rem;
+  border-radius:.28rem;padding:.28rem;
+  background:linear-gradient(135deg,rgba(255,240,246,.95),rgba(238,247,255,.95));
+  border:.02rem dashed rgba(214,190,225,.7);
+}
+.zodiac-card[hidden]{display:none;}
+.zodiac-title{font-size:.23rem;color:#B08FB8;letter-spacing:.06rem;}
+.zodiac-main{margin-top:.12rem;font-size:.28rem;font-weight:700;color:#6F6784;}
+.zodiac-desc{margin-top:.09rem;font-size:.23rem;color:#9A90A8;line-height:1.7;}
+
+.ver-tip{
+  margin-top:.24rem;font-size:.21rem;color:#B3AAC0;text-align:center;line-height:1.7;
+}
+.ver-tip b{color:#FF9EC4;}
+
+.res-actions{margin-top:.44rem;display:flex;flex-direction:column;gap:.18rem;}
+
+/* ============ 海报层 ============ */
+.poster-layer{
+  position:fixed;inset:0;z-index:900;display:none;
+  align-items:center;justify-content:center;
+}
+.poster-layer.show{display:flex;}
+.poster-mask{position:absolute;inset:0;background:rgba(40,34,54,.72);backdrop-filter:blur(2px);}
+.poster-body{
+  position:relative;z-index:1;width:84%;max-width:6.3rem;
+  max-height:88vh;display:flex;flex-direction:column;align-items:center;gap:.22rem;
+  animation:posterIn .3s cubic-bezier(.2,1.2,.4,1);
+}
+@keyframes posterIn{from{opacity:.5;transform:scale(.94)}to{opacity:1;transform:scale(1)}}
+.poster-scroll{
+  width:100%;overflow-y:auto;-webkit-overflow-scrolling:touch;
+  border-radius:.24rem;
+  box-shadow:0 .2rem .6rem rgba(0,0,0,.36);
+}
+.poster-scroll img{display:block;width:100%;height:auto;border-radius:.24rem;}
+.poster-tip{font-size:.24rem;color:#fff;opacity:.92;letter-spacing:.02rem;text-align:center;}
+.poster-actions{width:100%;display:flex;gap:.16rem;}
+.poster-actions .btn-ghost{background:rgba(255,255,255,.16);border-color:rgba(255,255,255,.4);color:#fff;}
+
+/* ============ Toast ============ */
+.toast{
+  position:fixed;left:50%;top:50%;z-index:999;
+  transform:translate(-50%,-50%) scale(.92);
+  max-width:72%;padding:.28rem .38rem;border-radius:.24rem;
+  background:rgba(58,51,72,.94);color:#fff;
+  font-size:.26rem;line-height:1.6;text-align:center;
+  opacity:0;pointer-events:none;
+  transition:opacity .26s ease,transform .26s cubic-bezier(.2,1.2,.4,1);
+  box-shadow:0 .1rem .4rem rgba(40,34,54,.3);
+}
+.toast.show{opacity:1;transform:translate(-50%,-50%) scale(1);}
+
+/* 系统开启「减弱动态效果」时关闭循环动画，保证信息可读 */
+@media (prefers-reduced-motion: reduce){
+  .ip-sway,.preview-cell,.welcome-deco i{animation:none !important;}
+  .page.active,.poster-body{animation:none !important;}
+  .ip-stage{animation:none !important;transform:none !important;}
+  .duo-tag,.res-pills .pill{animation:none !important;}
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- ================= 1. 首页 ================= -->
+  <section id="page-welcome" class="page active">
+    <div class="welcome-deco"><i></i><i></i><i></i><i></i></div>
+
+    <div class="welcome-head">
+      <div class="welcome-kicker">治愈系人格动物园</div>
+      <h1 class="welcome-title">你心里住着<br><em>哪只小动物</em></h1>
+      <p class="welcome-sub">30 道小题，2 分钟<br>找到你的人格动物图鉴</p>
+    </div>
+
+    <div class="preview-row">
+      <div class="preview-cell" data-preview="cat"></div>
+      <div class="preview-cell" data-preview="puppy"></div>
+      <div class="preview-cell" data-preview="fox"></div>
+    </div>
+
+    <div class="birth-card">
+      <div class="birth-row">
+        <div class="birth-label">生日<small>选填 · 仅作趣味参考</small></div>
+        <div class="birth-selects">
+          <select id="birthMonth"><option value="">月份</option></select>
+          <span>月</span>
+          <select id="birthDay"><option value="">日期</option></select>
+          <span>日</span>
+        </div>
+      </div>
+      <button class="zodiac-btn" id="btnZodiacPick" type="button">
+        <span class="zb-star">✧</span>
+        <span class="zb-txt" id="zodiacPickTxt">没有具体生日？直接选星座</span>
+        <span class="zb-arrow">›</span>
+      </button>
+    </div>
+
+    <button class="btn-primary" id="btnStart">开始测试</button>
+    <p class="welcome-foot">答满 12 题即可查看简版<br>答满 30 题解锁完整报告喵～</p>
+  </section>
+
+  <!-- ================= 2. 答题页 ================= -->
+  <section id="page-quiz" class="page">
+    <div class="quiz-top">
+      <button class="icon-btn" id="btnBackHome" aria-label="返回首页">‹</button>
+      <div class="quiz-progress">
+        <div class="bar"><i id="pbar"></i></div>
+        <div class="quiz-count">第 <b id="qcount">1</b> / 30 题</div>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-index">QUESTION <span id="qidx">01</span></div>
+      <div class="q-text" id="qtext">加载中…</div>
+    </div>
+
+    <div class="opt-list" id="optList"></div>
+
+    <div class="quiz-nav">
+      <button class="nav-btn" id="btnPrev">上一题</button>
+      <button class="nav-btn primary" id="btnNext">下一题</button>
+    </div>
+
+    <div class="quick-wrap" id="quickWrap" hidden>
+      <div class="quick-hint">已经答满 12 题啦，可以先看一眼简版结果喵～</div>
+      <button class="quick-btn" id="btnQuickResult" type="button">看看我的简版报告</button>
+      <div class="quick-sub">也可以继续答完 30 题，报告会更准哦</div>
+    </div>
+  </section>
+
+  <!-- ================= 3. 结果页 ================= -->
+  <section id="page-result" class="page">
+    <div class="res-top">
+      <div class="res-top-l">
+        <div class="res-title">观己人格报告</div>
+        <div class="res-sub">MBTI · <b id="resCode">INTJ</b> <span id="resName">建筑师</span></div>
+      </div>
+      <div class="res-badge" id="resBadge">主副双人格完整版</div>
+    </div>
+
+    <div class="res-duo">
+      <div class="duo-card duo-ip">
+        <div class="ip-stage ip-mini" id="ipSubStage"><div class="ip-sway d1" id="ipSub"></div></div>
+        <div class="ip-stage ip-main" id="ipMainStage"><div class="ip-sway" id="ipMain"></div></div>
+        <div class="duo-tags">
+          <div class="duo-tag" id="tagMain">主人格 · —</div>
+          <div class="duo-tag" id="tagSub">副人格 · —</div>
+        </div>
+      </div>
+      <div class="duo-card duo-radar">
+        <div class="radar-title">人格维度</div>
+        <div class="radar-box" id="radarBox"></div>
+      </div>
+    </div>
+
+    <div class="res-summary">
+      <div class="sum-head" id="sumHead">—</div>
+      <div class="sum-body" id="sumBody">—</div>
+    </div>
+
+    <div class="res-pills" id="pillsBox"></div>
+
+    <div class="module-list" id="moduleList"></div>
+
+    <div class="zodiac-card" id="zodiacCard" hidden>
+      <div class="zodiac-title">星座趣味参考</div>
+      <div class="zodiac-main" id="zodiacMain"></div>
+      <div class="zodiac-desc" id="zodiacDesc"></div>
+    </div>
+
+    <p class="ver-tip" id="verTip" hidden></p>
+
+    <div class="res-actions" id="resActions">
+      <button class="btn-resume" id="btnResume" hidden>继续答题<span class="arrow">›</span></button>
+      <button class="btn-primary" id="btnPoster">生成海报保存图片到手机相册</button>
+      <button class="btn-ghost" id="btnRestart">重新测试</button>
+    </div>
+  </section>
+
+</div>
+
+<!-- 海报层 -->
+<div class="poster-layer" id="posterLayer">
+  <div class="poster-mask" id="posterMask"></div>
+  <div class="poster-body">
+    <div class="poster-scroll" id="posterScroll"></div>
+    <div class="poster-tip">长按上方图片 → 保存到手机相册</div>
+    <div class="poster-actions">
+      <button class="btn-ghost" id="btnClosePoster">关闭</button>
+    </div>
+  </div>
+</div>
+
+<!-- 星座选择面板 -->
+<div class="zodiac-layer" id="zodiacLayer" hidden>
+  <div class="zodiac-mask" id="zodiacMask"></div>
+  <div class="zodiac-sheet">
+    <div class="zs-title">选一个你的星座</div>
+    <div class="zs-sub">只是图个乐，不参与人格计算喵～</div>
+    <div class="zs-grid" id="zsGrid"></div>
+    <div class="zs-actions">
+      <button class="zs-clear" id="btnZodiacClear" type="button">不选了</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+'use strict';
+
+/* 旧内核 Canvas ellipse 兜底（iOS 11 及以下） */
+(function(){
+  if(typeof CanvasRenderingContext2D === 'undefined') return;
+  var P = CanvasRenderingContext2D.prototype;
+  if(P.ellipse) return;
+  P.ellipse = function(x, y, rx, ry, rot, sa, ea, ccw){
+    this.save();
+    this.translate(x, y);
+    this.rotate(rot || 0);
+    this.scale(rx, ry);
+    this.arc(0, 0, 1, sa, ea, ccw);
+    this.restore();
+  };
+})();
+
+/* =========================================================
+   1. 题库（30 题）
+   已修正：Q17/Q18 反向标记颠倒、Q22/Q24/Q26/Q28 反向缺失
+   ========================================================= */
+var questionConfig = [
+  {id:1, dim:'S',     isReverse:false, text:'别人语气稍微冷淡，我容易多想'},
+  {id:2, dim:'S',     isReverse:false, text:'我能快速察觉到别人情绪的细微变化'},
+  {id:3, dim:'E',     isReverse:false, text:'我习惯性照顾身边人的情绪感受'},
+  {id:4, dim:'E',     isReverse:false, text:'我尽量避免和身边人发生冲突'},
+  {id:5, dim:'StRaw', isReverse:false, text:'压力大的时候我的情绪很难平复'},
+  {id:6, dim:'A',     isReverse:false, text:'我很在意他人对我的评价'},
+  {id:7, dim:'R',     isReverse:false, text:'做重大决定前我会反复评估风险'},
+  {id:8, dim:'PRaw',  isReverse:false, text:'一件事长期看不到回报我很容易放弃'},
+  {id:9, dim:'N',     isReverse:false, text:'我厌倦日复一日重复的生活，渴望新鲜体验'},
+  {id:10,dim:'D',     isReverse:false, text:'重大抉择我更愿意自己拿主意，不喜被别人安排'},
+  {id:11,dim:'CHECK', isReverse:false, text:'空闲时我更喜欢热闹的聚会'},
+  {id:12,dim:'CHECK', isReverse:false, text:'未知的机会第一反应我是担忧风险'},
+  {id:13,dim:'S',     isReverse:false, text:'一段关系里我常常是最先感知到不对劲的那个人'},
+  {id:14,dim:'S',     isReverse:true,  text:'别人的看法基本不会影响我的心情'},
+  {id:15,dim:'E',     isReverse:false, text:'哪怕委屈一点，我也希望维持氛围和谐'},
+  {id:16,dim:'E',     isReverse:false, text:'看到别人难过我很容易共情难受'},
+  {id:17,dim:'StRaw', isReverse:true,  text:'就算遇到打击我也可以很快调整状态'},
+  {id:18,dim:'StRaw', isReverse:false, text:'遇到挫折我会长时间陷入低落'},
+  {id:19,dim:'StRaw', isReverse:false, text:'事情悬而未决，我内心一直焦虑不安'},
+  {id:20,dim:'A',     isReverse:true,  text:'我做事不需要得到别人认可才有动力'},
+  {id:21,dim:'A',     isReverse:false, text:'被人否定的时候我会失落很久'},
+  {id:22,dim:'R',     isReverse:true,  text:'我愿意赌一把去尝试高风险高回报的机会'},
+  {id:23,dim:'R',     isReverse:false, text:'稳妥安全是我做选择的第一标准'},
+  {id:24,dim:'PRaw',  isReverse:true,  text:'认准一件事，我可以长期深耕下去'},
+  {id:25,dim:'PRaw',  isReverse:false, text:'枯燥重复的任务很容易耗尽我的耐心'},
+  {id:26,dim:'N',     isReverse:true,  text:'稳定不变的日子会给我满满的安全感'},
+  {id:27,dim:'N',     isReverse:false, text:'我总想去体验没接触过的赛道、新鲜事物'},
+  {id:28,dim:'D',     isReverse:true,  text:'做决定前我习惯大量听取别人的意见'},
+  {id:29,dim:'D',     isReverse:false, text:'我需要大量独处时间恢复精力'},
+  {id:30,dim:'CHECK', isReverse:false, text:'很多时候我不知道自己真正想要什么'}
+];
+
+/* =========================================================
+   2. 九只人格动物
+   desc 可自由改写；img 填图片地址后自动替换 SVG 形象
+   ========================================================= */
+var personalityDict = {
+  puppy:  {name:'快乐小狗',   desc:'乐观外放，擅长社交，能量来自与人交流', img:''},
+  cat:    {name:'敏感小猫',   desc:'心思细腻，共情力强，容易捕捉细微情绪', img:''},
+  bear:   {name:'热血小熊',   desc:'踏实努力，愿意长期坚持，耐力很强',     img:''},
+  panther:{name:'独行黑豹',   desc:'独立果决，有自己的想法，不喜被约束',   img:''},
+  koala:  {name:'暖心考拉',   desc:'温和包容，不喜冲突，优先照顾他人感受', img:''},
+  fox:    {name:'好奇小狐狸', desc:'热爱新鲜事物，喜欢探索多种可能性',     img:''},
+  sheep:  {name:'佛系绵羊',   desc:'心态松弛，随遇而安，不喜欢高强度内卷', img:''},
+  turtle: {name:'谨慎乌龟',   desc:'风险意识强，三思而后行，求稳优先',     img:''},
+  bird:   {name:'追梦飞鸟',   desc:'向往自由，有理想，不愿困在一成不变的日常', img:''}
+};
+
+/* =========================================================
+   3. 16 型 → 主/副人格
+   ========================================================= */
+var mbtiIpMap = [
+{code:'INTJ',name:'建筑师',main:'panther',sub:'fox',
+ freeText:'INTJ｜建筑师｜主人格：独行黑豹，理智独立，擅长长线规划。',
+ fullText:'【INTJ｜建筑师】\n特质：独立理性，善于深度思考，有长远大局观。\n优势：逻辑强，目标清晰，愿意为长期目标布局。\n短板：容易过度思虑，不太擅长处理复杂人情。\n事业方向：适合策略规划、研究、分析类工作。\n感情模式：宁缺毋滥，重视精神同频，讨厌无意义内耗。'},
+{code:'INTP',name:'逻辑学家',main:'fox',sub:'turtle',
+ freeText:'INTP｜逻辑学家｜主人格：好奇小狐狸，热爱思考，乐于探索一切未知。',
+ fullText:'【INTP｜逻辑学家】\n特质：好奇心旺盛，沉迷思考各类抽象问题。\n优势：脑洞大，学习理解能力强，不盲从主流观点。\n短板：执行力偏弱，容易想得多做得少。\n事业方向：研发、策划、理论研究、创意岗位。\n感情模式：注重思想共鸣，不喜欢黏腻拘束的关系。'},
+{code:'ENTJ',name:'指挥官',main:'panther',sub:'bear',
+ freeText:'ENTJ｜指挥官｜主人格：独行黑豹，目标感极强，做事果断有魄力。',
+ fullText:'【ENTJ｜指挥官】\n特质：自信果决，擅长统筹安排，天生领导者。\n优势：敢冲敢闯，抗压强，推动事情落地能力优秀。\n短板：容易强势，忽略他人情绪感受。\n事业方向：管理、创业、项目负责人、市场开拓。\n感情模式：互相成长，势均力敌的关系最适合你。'},
+{code:'ENTP',name:'辩论家',main:'fox',sub:'puppy',
+ freeText:'ENTP｜辩论家｜主人格：好奇小狐狸，思维跳脱，乐于挑战固有规则。',
+ fullText:'【ENTP｜辩论家】\n特质：脑洞源源不断，喜欢思辨、碰撞新观点。\n优势：创意足，适应力强，擅长打破僵局。\n短板：耐心不足，容易三分钟热度。\n事业方向：营销策划、谈判、新媒体、创新业务。\n感情模式：讨厌枯燥，需要有趣、能一起折腾的伴侣。'},
+{code:'INFJ',name:'提倡者',main:'cat',sub:'koala',
+ freeText:'INFJ｜提倡者｜主人格：敏感小猫，洞察力强，内心拥有坚定理想。',
+ fullText:'【INFJ｜提倡者】\n特质：共情深刻，洞察力强，有自己内心的信仰。\n优势：善于读懂他人，做事有使命感。\n短板：容易内耗，过度背负别人的情绪。\n事业方向：教育、心理咨询、人文、策划。\n感情模式：极度看重灵魂契合，宁缺毋滥。'},
+{code:'INFP',name:'调停者',main:'koala',sub:'cat',
+ freeText:'INFP｜调停者｜主人格：暖心考拉，内心柔软，遵从自己内心价值观。',
+ fullText:'【INFP｜调停者】\n特质：理想主义，善良敏感，忠于内心。\n优势：共情力强，待人真诚，拥有独特的创造力。\n短板：容易自我怀疑，害怕现实的冲突。\n事业方向：写作、艺术、人文、服务类岗位。\n感情模式：追求纯粹真诚的感情，防备心较重。'},
+{code:'ENFJ',name:'主人公',main:'puppy',sub:'koala',
+ freeText:'ENFJ｜主人公｜主人格：快乐小狗，擅长鼓舞他人，自带感染力。',
+ fullText:'【ENFJ｜主人公】\n特质：热情温暖，擅长洞察人心，愿意带动身边人成长。\n优势：情商高，擅长沟通，很会照顾别人感受。\n短板：容易过度讨好，忽略自己需求。\n事业方向：培训、人力资源、教师、社群运营。\n感情模式：愿意付出，渴望双向奔赴的亲密关系。'},
+{code:'ENFP',name:'竞选者',main:'puppy',sub:'fox',
+ freeText:'ENFP｜竞选者｜主人格：快乐小狗，充满热情，热爱一切新鲜有趣事物。',
+ fullText:'【ENFP｜竞选者】\n特质：热情自由，想象力丰富，讨厌枯燥重复。\n优势：感染力强，脑洞多，擅长链接不同的人。\n短板：定力不足，很难长期做枯燥工作。\n事业方向：新媒体、活动策划、公关、创意。\n感情模式：讨厌压抑，向往轻松浪漫的相处。'},
+{code:'ISTJ',name:'物流师',main:'turtle',sub:'bear',
+ freeText:'ISTJ｜物流师｜主人格：谨慎乌龟，踏实稳重，做事严谨靠谱。',
+ fullText:'【ISTJ｜物流师】\n特质：严谨守序，责任心强，做事一步一个脚印。\n优势：靠谱细心，执行力稳定，值得托付。\n短板：不爱冒险，对新变化适应偏慢。\n事业方向：财务、行政、质控、技术运维。\n感情模式：慢热专一，偏爱稳定踏实的长期关系。'},
+{code:'ISFJ',name:'守卫者',main:'koala',sub:'turtle',
+ freeText:'ISFJ｜守卫者｜主人格：暖心考拉，温柔负责，习惯默默照顾周围的人。',
+ fullText:'【ISFJ｜守卫者】\n特质：温柔顾家，责任心强，习惯为他人付出。\n优势：细心体贴，做事稳妥，非常靠谱。\n短板：不懂拒绝，经常委屈自己迁就别人。\n事业方向：医护、行政、后勤、各类服务岗位。\n感情模式：细水长流，愿意默默为家庭付出。'},
+{code:'ESTJ',name:'总经理',main:'bear',sub:'panther',
+ freeText:'ESTJ｜总经理｜主人格：热血小熊，务实自律，做事讲求规则效率。',
+ fullText:'【ESTJ｜总经理】\n特质：务实干练，重视秩序、责任与效率。\n优势：执行力强，擅长落地，遇事不拖沓。\n短板：变通不足，有时过于讲规则缺少人情味。\n事业方向：管理、生产运营、合规、供应链。\n感情模式：踏实过日子，看重责任感与担当。'},
+{code:'ESFJ',name:'执政官',main:'puppy',sub:'sheep',
+ freeText:'ESFJ｜执政官｜主人格：快乐小狗，擅长维护人际关系，在意大家的感受。',
+ fullText:'【ESFJ｜执政官】\n特质：外向热心，重视人情往来，在意集体氛围。\n优势：擅长社交协调，很懂人情世故。\n短板：容易过度在意别人评价，容易焦虑。\n事业方向：人事、客服、线下运营、社群。\n感情模式：看重家庭，喜欢热闹安稳的生活。'},
+{code:'ISTP',name:'鉴赏家',main:'bear',sub:'fox',
+ freeText:'ISTP｜鉴赏家｜主人格：热血小熊，动手能力强，冷静务实不爱空谈。',
+ fullText:'【ISTP｜鉴赏家】\n特质：冷静务实，擅长实操，追求自由不受约束。\n优势：动手能力强，遇事冷静，适应力不错。\n短板：不喜欢复杂人情应酬，不爱长期规划。\n事业方向：技术岗、维修、调试、实操类工作。\n感情模式：不喜黏糊，需要足够的个人空间。'},
+{code:'ISFP',name:'探险家',main:'cat',sub:'sheep',
+ freeText:'ISFP｜探险家｜主人格：敏感小猫，感知力强，活在当下享受生活。',
+ fullText:'【ISFP｜探险家】\n特质：细腻感性，审美在线，不喜宏大规划。\n优势：感受力强，做事随心真诚。\n短板：回避冲突，不喜欢做长期艰难抉择。\n事业方向：设计、手工、艺术、体验型岗位。\n感情模式：慢热敏感，需要被尊重、被理解。'},
+{code:'ESTP',name:'企业家',main:'fox',sub:'puppy',
+ freeText:'ESTP｜企业家｜主人格：好奇小狐狸，敢闯敢试，擅长抓住当下机会。',
+ fullText:'【ESTP｜企业家】\n特质：现实灵活，热衷冒险，擅长把握当下机会。\n优势：行动力极强，擅长随机应变。\n短板：缺少长期规划，容易短期主义。\n事业方向：销售、贸易、线下商务、创业。\n感情模式：活在当下，喜欢轻松刺激的相处。'},
+{code:'ESFP',name:'表演者',main:'puppy',sub:'cat',
+ freeText:'ESFP｜表演者｜主人格：快乐小狗，热爱热闹，乐于享受当下的人生。',
+ fullText:'【ESFP｜表演者】\n特质：外向活泼，享受当下，感染力很强。\n优势：擅长活跃气氛，共情当下情绪。\n短板：很难忍受长期枯燥的规划和坚持。\n事业方向：主播、演艺、销售、活动现场。\n感情模式：追求快乐相处，讨厌沉重压抑关系。'}
+];
+
+/* =========================================================
+   4. 星座（起始日为标准分界，跨年闭合）
+   bias 保留但【不参与】MBTI 计算，仅作展示层彩蛋
+   ========================================================= */
+var zodiacConfig = [
+  {month:1, day:20, name:'水瓶座', desc:'独立有想法，讨厌被束缚',   bias:{S:-2,N:3}},
+  {month:2, day:19, name:'双鱼座', desc:'敏感浪漫，共情力强',       bias:{S:3,E:2}},
+  {month:3, day:21, name:'白羊座', desc:'热血冲动，敢冲敢闯',       bias:{N:2,D:2}},
+  {month:4, day:20, name:'金牛座', desc:'踏实稳重，追求安稳',       bias:{PRaw:-3,R:2}},
+  {month:5, day:21, name:'双子座', desc:'好奇心旺盛，思维跳脱',     bias:{N:4}},
+  {month:6, day:22, name:'巨蟹座', desc:'顾家细腻，情绪丰富',       bias:{S:3,E:2}},
+  {month:7, day:23, name:'狮子座', desc:'自信外向，在意认可',       bias:{A:3,D:2}},
+  {month:8, day:23, name:'处女座', desc:'细心谨慎，追求完美',       bias:{R:3}},
+  {month:9, day:23, name:'天秤座', desc:'追求和谐，纠结犹豫',       bias:{E:3}},
+  {month:10,day:24, name:'天蝎座', desc:'洞察力强，爱恨分明',       bias:{S:4}},
+  {month:11,day:23, name:'射手座', desc:'热爱自由，乐观爱冒险',     bias:{N:4}},
+  {month:12,day:22, name:'摩羯座', desc:'隐忍坚韧，目标导向',       bias:{PRaw:-4}}
+];
+
+var ZODIAC_STARTS = [
+  {m:1, d:1,  idx:11}, {m:1, d:20, idx:0},  {m:2, d:19, idx:1},
+  {m:3, d:21, idx:2},  {m:4, d:20, idx:3},  {m:5, d:21, idx:4},
+  {m:6, d:22, idx:5},  {m:7, d:23, idx:6},  {m:8, d:23, idx:7},
+  {m:9, d:23, idx:8},  {m:10,d:24, idx:9},  {m:11,d:23, idx:10},
+  {m:12,d:22, idx:11}
+];
+
+function getZodiac(month, day){
+  var m = parseInt(month,10), d = parseInt(day,10);
+  if(!m || !d || m<1 || m>12 || d<1 || d>31) return null;
+  var cur = ZODIAC_STARTS[0];
+  for(var i=0;i<ZODIAC_STARTS.length;i++){
+    var s = ZODIAC_STARTS[i];
+    if(m > s.m || (m === s.m && d >= s.d)) cur = s;
+  }
+  return zodiacConfig[cur.idx];
+}
+
+/* =========================================================
+   5. 计分
+   ========================================================= */
+var DIM_KEYS = ['S','E','StRaw','A','R','PRaw','N','D'];
+
+function countAnswered(map){
+  var n = 0;
+  for(var i=0;i<questionConfig.length;i++){
+    if(map[questionConfig[i].id] != null) n++;
+  }
+  return n;
+}
+
+/* 全部选同一项 → 无效 */
+function checkValid(map){
+  var vals = [];
+  for(var i=0;i<questionConfig.length;i++){
+    var v = map[questionConfig[i].id];
+    if(v != null) vals.push(v);
+  }
+  if(vals.length < 3) return false;
+  for(var j=1;j<vals.length;j++){
+    if(vals[j] !== vals[0]) return true;
+  }
+  return false;
+}
+
+/* 按已答题数归一化，未答不计分（简版不会被拉低） */
+function normalize(map){
+  var sum = {}, mx = {};
+  for(var i=0;i<questionConfig.length;i++){
+    var q = questionConfig[i];
+    if(q.dim === 'CHECK') continue;
+    var a = map[q.id];
+    if(a == null) continue;
+    var s = q.isReverse ? (6 - a) : a;   /* 1↔5 对称反向 */
+    sum[q.dim] = (sum[q.dim] || 0) + s;
+    mx[q.dim]  = (mx[q.dim]  || 0) + 5;
+  }
+  var pct = {};
+  for(var k=0;k<DIM_KEYS.length;k++){
+    var d = DIM_KEYS[k];
+    pct[d] = mx[d] ? Math.round(sum[d] / mx[d] * 100) : 50;
+  }
+  pct.St = 100 - pct.StRaw;   /* 情绪稳定性 */
+  pct.P  = 100 - pct.PRaw;    /* 长期坚持度 */
+  return pct;
+}
+
+function mapToMbtiAxis(p){
+  return {
+    E_I: p.E > 50 ? 'E' : 'I',
+    S_N: p.N > 50 ? 'N' : 'S',
+    T_F: p.S > 50 ? 'F' : 'T',
+    J_P: p.D > 50 ? 'J' : 'P'
+  };
+}
+
+function getMbtiCode(ax){
+  return ax.E_I + ax.S_N + ax.T_F + ax.J_P;
+}
+
+/* 星座偏移：仅供展示，不参与上面任何判定 */
+function applyZodiacDimOffset(p, zod){
+  if(!zod || !zod.bias) return p;
+  var r = {};
+  for(var k in p) r[k] = p[k];
+  for(var key in zod.bias){
+    if(r[key] == null) continue;
+    r[key] = Math.max(0, Math.min(100, r[key] + zod.bias[key]));
+  }
+  return r;
+}
+
+function parseFullText(text){
+  var map = {'特质':'trait','优势':'strength','短板':'weakness','事业方向':'career','感情模式':'love'};
+  var out = [], lines = String(text).split('\n');
+  for(var i=0;i<lines.length;i++){
+    var line = lines[i].trim();
+    if(!line) continue;
+    var p = line.indexOf('：');
+    if(p < 0) continue;
+    var key = line.slice(0, p).trim();
+    if(!map[key]) continue;
+    out.push({key:map[key], title:key, text:line.slice(p+1).trim()});
+  }
+  return out;
+}
+
+function runTest(map, birthMonth, birthDay, zodiacKey){
+  if(!checkValid(map)){
+    return {ok:false, msg:'答卷无效，请认真作答后重试'};
+  }
+  var pct = normalize(map);
+  var axis = mapToMbtiAxis(pct);
+  var code = getMbtiCode(axis);
+  var item = null;
+  for(var i=0;i<mbtiIpMap.length;i++){
+    if(mbtiIpMap[i].code === code){ item = mbtiIpMap[i]; break; }
+  }
+  if(!item) return {ok:false, msg:'匹配结果异常，请重试'};
+
+  var answered = countAnswered(map);
+  var isFreeVersion = answered < 30;
+
+  /* 手选星座优先，没选才用生日推算；两者都不影响 MBTI */
+  var zod = null;
+  if(zodiacKey != null && zodiacKey >= 0 && zodiacKey < zodiacConfig.length){
+    zod = zodiacConfig[zodiacKey];
+  }else{
+    zod = getZodiac(birthMonth, birthDay);
+  }
+
+  var modules = isFreeVersion ? [] : parseFullText(item.fullText);
+
+  return {
+    ok:true,
+    isFreeVersion:isFreeVersion,
+    answered:answered,
+    pct:pct,
+    mbti:{
+      code:item.code, name:item.name,
+      mainKey:item.main, subKey:item.sub,
+      main:personalityDict[item.main],
+      sub:personalityDict[item.sub]
+    },
+    freeText:item.freeText,
+    modules:modules,
+    zodiac:zod
+  };
+}
+
+/* =========================================================
+   6. IP 形象（SVG 参数化）
+   ========================================================= */
+var IP_STYLE = {
+  puppy:  {fur:'#FFD98E', fur2:'#F5C066', ear:'#E9A94E', line:'#D2923F', blush:'#FFAEA0', kind:'drop',      emoji:'🐶'},
+  cat:    {fur:'#FFCBDC', fur2:'#F7AFC8', ear:'#EE90B2', line:'#DB7EA4', blush:'#FF9BB4', kind:'point',     emoji:'🐱'},
+  bear:   {fur:'#E0AE7C', fur2:'#CB9560', ear:'#B87C46', line:'#A9713F', blush:'#F0A08C', kind:'round',     emoji:'🐻'},
+  panther:{fur:'#B0A8D4', fur2:'#9088BC', ear:'#7F76AC', line:'#6B629A', blush:'#C9ADDF', kind:'point',     emoji:'🐆'},
+  koala:  {fur:'#CFDBEE', fur2:'#B2C3DE', ear:'#A5B8D6', line:'#8FA3C4', blush:'#F6B6B6', kind:'biground',  emoji:'🐨'},
+  fox:    {fur:'#FFB877', fur2:'#F59A50', ear:'#E9853B', line:'#D3732C', blush:'#FF9D8C', kind:'point-tall',emoji:'🦊'},
+  sheep:  {fur:'#FBF6EC', fur2:'#E8DFD0', ear:'#DACDB9', line:'#C8BAA4', blush:'#FFC4C4', kind:'fluff',     emoji:'🐑'},
+  turtle: {fur:'#ADDFBD', fur2:'#8BCBA3', ear:'#74B98C', line:'#5FA678', blush:'#FFB6B6', kind:'none',      emoji:'🐢'},
+  bird:   {fur:'#A7D8F3', fur2:'#7FC1E6', ear:'#F2A65E', line:'#5FA3CE', blush:'#FFADBB', kind:'tuft',      emoji:'🐦'}
+};
+
+/* 头部轮廓：上圆下收，底部略平，像个软糖 */
+var IP_HEAD_PATH = 'M120 40 C 172 40, 200 76, 200 116 C 200 162, 168 194, 120 194 C 72 194, 40 162, 40 116 C 40 76, 68 40, 120 40 Z';
+
+var __ipUid = 0;
+
+function ipEar(inner, cx, cy){
+  return '<g class="ip-ear" data-cx="' + cx + '" data-cy="' + cy + '">' + inner + '</g>';
+}
+
+/* ---------- 耳朵（每只动物一套，坐标基于 240×240 画布） ---------- */
+function ipEars(s, F, E, L){
+  var u = s.__u, k = s.kind, out = '';
+
+  if(k === 'point' || k === 'point-tall'){
+    var tall = (k === 'point-tall');
+    var tipY  = tall ? 2 : 14;
+    var tipX  = tall ? 50 : 54;
+    out += ipEar(
+      '<path d="M94 58 C 82 40, 62 ' + (tipY + 8) + ', ' + tipX + ' ' + tipY + ' C ' + (tipX - 2) + ' 32, 58 62, 68 82 Z" fill="url(#' + u + 'f)" stroke="' + L + '" stroke-width="5" stroke-linejoin="round"/>'
+    + '<path d="M86 60 C 78 46, 66 30, ' + (tipX + 8) + ' ' + (tipY + 12) + ' C ' + (tipX + 6) + ' 40, 62 60, 68 74 Z" fill="' + E + '" opacity=".5"/>', 84, 64);
+    out += ipEar(
+      '<path d="M146 58 C 158 40, 178 ' + (tipY + 8) + ', ' + (240 - tipX) + ' ' + tipY + ' C ' + (242 - tipX) + ' 32, 182 62, 172 82 Z" fill="url(#' + u + 'f)" stroke="' + L + '" stroke-width="5" stroke-linejoin="round"/>'
+    + '<path d="M154 60 C 162 46, 174 30, ' + (232 - tipX) + ' ' + (tipY + 12) + ' C ' + (234 - tipX) + ' 40, 178 60, 172 74 Z" fill="' + E + '" opacity=".5"/>', 156, 64);
+
+  } else if(k === 'round'){
+    out += ipEar('<circle cx="64" cy="58" r="32" fill="url(#' + u + 'f)" stroke="' + L + '" stroke-width="5"/>'
+              +  '<circle cx="64" cy="58" r="17" fill="' + E + '" opacity=".45"/>', 64, 62);
+    out += ipEar('<circle cx="176" cy="58" r="32" fill="url(#' + u + 'f)" stroke="' + L + '" stroke-width="5"/>'
+              +  '<circle cx="176" cy="58" r="17" fill="' + E + '" opacity=".45"/>', 176, 62);
+
+  } else if(k === 'biground'){
+    out += ipEar('<circle cx="38" cy="88" r="45" fill="url(#' + u + 'f)" stroke="' + L + '" stroke-width="5"/>'
+              +  '<circle cx="38" cy="88" r="28" fill="' + E + '" opacity=".4"/>', 38, 92);
+    out += ipEar('<circle cx="202" cy="88" r="45" fill="url(#' + u + 'f)" stroke="' + L + '" stroke-width="5"/>'
+              +  '<circle cx="202" cy="88" r="28" fill="' + E + '" opacity=".4"/>', 202, 92);
+
+  } else if(k === 'drop'){
+    out += ipEar('<path d="M74 64 C 34 68, 12 116, 28 158 C 40 186, 72 178, 78 140 C 82 116, 78 84, 74 64 Z" fill="url(#' + u + 'f)" stroke="' + L + '" stroke-width="5" stroke-linejoin="round"/>'
+              +  '<path d="M66 78 C 42 88, 32 120, 40 148 C 46 166, 60 162, 64 138 Z" fill="' + E + '" opacity=".35"/>', 72, 66);
+    out += ipEar('<path d="M166 64 C 206 68, 228 116, 212 158 C 200 186, 168 178, 162 140 C 158 116, 162 84, 166 64 Z" fill="url(#' + u + 'f)" stroke="' + L + '" stroke-width="5" stroke-linejoin="round"/>'
+              +  '<path d="M174 78 C 198 88, 208 120, 200 148 C 194 166, 180 162, 176 138 Z" fill="' + E + '" opacity=".35"/>', 168, 66);
+
+  } else if(k === 'fluff'){
+    var cloud = [[74,50,25],[104,36,26],[136,36,26],[166,50,25],[56,80,21],[184,80,21]];
+    var lft = '', rgt = '';
+    for(var i = 0; i < cloud.length; i++){
+      var c = cloud[i];
+      var g = '<circle cx="' + c[0] + '" cy="' + c[1] + '" r="' + c[2] + '" fill="url(#' + u + 'f)" stroke="' + L + '" stroke-width="4.5"/>';
+      if(c[0] <= 120){ lft += g; } else { rgt += g; }
+    }
+    out += ipEar(lft, 78, 56);
+    out += ipEar(rgt, 162, 56);
+
+  } else if(k === 'tuft'){
+    out += ipEar('<path d="M116 46 C 108 24, 116 8, 130 2 C 126 20, 126 34, 128 48 Z" fill="' + F + '" stroke="' + L + '" stroke-width="4.5" stroke-linejoin="round"/>', 120, 40);
+    out += ipEar('<path d="M130 50 C 134 30, 146 18, 160 14 C 150 30, 144 42, 142 52 Z" fill="url(#' + u + 'f)" stroke="' + L + '" stroke-width="4.5" stroke-linejoin="round"/>', 136, 42);
+    out += ipEar('<path d="M104 50 C 92 34, 78 26, 64 24 C 80 32, 92 42, 98 54 Z" fill="url(#' + u + 'f)" stroke="' + L + '" stroke-width="4.5" stroke-linejoin="round"/>', 100, 42);
+  }
+  return out;
+}
+
+/* ---------- 花纹 / 面部特化 ---------- */
+function ipFace(s, F2, E, B){
+  var k = s.kind, out = '';
+
+  if(s.__key === 'cat'){
+    out += '<path d="M120 52 v18 M107 56 l6 14 M133 56 l-6 14" stroke="' + F2 + '" stroke-width="6" stroke-linecap="round" fill="none" opacity=".55"/>'
+        +  '<path d="M46 130 h26 M46 142 h24" stroke="' + F2 + '" stroke-width="3.6" stroke-linecap="round" opacity=".7"/>'
+        +  '<path d="M194 130 h-26 M194 142 h-24" stroke="' + F2 + '" stroke-width="3.6" stroke-linecap="round" opacity=".7"/>';
+  } else if(s.__key === 'panther'){
+    out += '<circle cx="72" cy="76" r="6" fill="' + F2 + '" opacity=".5"/><circle cx="92" cy="66" r="4.4" fill="' + F2 + '" opacity=".42"/>'
+        +  '<circle cx="168" cy="76" r="6" fill="' + F2 + '" opacity=".5"/><circle cx="148" cy="66" r="4.4" fill="' + F2 + '" opacity=".42"/>'
+        +  '<path d="M40 148 q10 6 20 0 M180 148 q10 6 20 0" stroke="' + F2 + '" stroke-width="4" fill="none" opacity=".35" stroke-linecap="round"/>';
+  } else if(s.__key === 'fox'){
+    out += '<path d="M120 40 C 96 40, 78 60, 74 86 C 92 74, 148 74, 166 86 C 162 60, 144 40, 120 40 Z" fill="#FFFFFF" opacity=".55"/>'
+        +  '<ellipse cx="120" cy="168" rx="42" ry="26" fill="#FFFFFF" opacity=".72"/>';
+  } else if(s.__key === 'bear'){
+    out += '<ellipse cx="120" cy="158" rx="46" ry="34" fill="#FFFFFF" opacity=".3"/>';
+  } else if(s.__key === 'puppy'){
+    out += '<path d="M120 40 C 104 40, 92 52, 90 68 C 100 58, 140 58, 150 68 C 148 52, 136 40, 120 40 Z" fill="#FFFFFF" opacity=".4"/>';
+  } else if(s.__key === 'turtle'){
+    out += '<path d="M56 76 q18 -12 36 0 M148 76 q18 -12 36 0" stroke="' + F2 + '" stroke-width="5" fill="none" opacity=".5" stroke-linecap="round"/>'
+        +  '<path d="M120 40 C 96 40, 78 58, 74 82 C 92 68, 148 68, 166 82 C 162 58, 144 40, 120 40 Z" fill="#FFFFFF" opacity=".35"/>';
+  } else if(s.__key === 'sheep'){
+    out += '<ellipse cx="120" cy="60" rx="52" ry="26" fill="#FFFFFF" opacity=".5"/>';
+  } else if(s.__key === 'bird'){
+    out += '<path d="M120 40 C 100 40, 84 56, 80 76 C 96 64, 144 64, 160 76 C 156 56, 140 40, 120 40 Z" fill="#FFFFFF" opacity=".35"/>';
+  } else if(s.__key === 'koala'){
+    out += '<ellipse cx="120" cy="150" rx="40" ry="30" fill="#FFFFFF" opacity=".35"/>';
+  }
+  return out;
+}
+
+function buildIpSvg(key){
+  var s = IP_STYLE[key] || IP_STYLE.cat;
+  var pd = personalityDict[key];
+  if(pd && pd.img) return '<img src="' + pd.img + '" alt="">';
+  if(s.img) return '<img src="' + s.img + '" alt="">';
+
+  var F = s.fur, F2 = s.fur2, E = s.ear, B = s.blush, L = s.line;
+  var u = 'ipx' + (++__ipUid);
+  s.__u = u; s.__key = key;
+
+  var ears  = ipEars(s, F, E, L);
+  var marks = ipFace(s, F2, E, B);
+
+  var svg = '<svg viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg">'
+    /* 渐变与裁剪 */
+    + '<defs>'
+    +   '<linearGradient id="' + u + 'f" x1="0" y1="0" x2="0.35" y2="1">'
+    +     '<stop offset="0" stop-color="' + F + '"/>'
+    +     '<stop offset="0.62" stop-color="' + F + '"/>'
+    +     '<stop offset="1" stop-color="' + F2 + '"/>'
+    +   '</linearGradient>'
+    +   '<radialGradient id="' + u + 's" cx="0.32" cy="0.2" r="0.72">'
+    +     '<stop offset="0" stop-color="#FFFFFF" stop-opacity="0.55"/>'
+    +     '<stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/>'
+    +   '</radialGradient>'
+    +   '<clipPath id="' + u + 'c"><path d="' + IP_HEAD_PATH + '"/></clipPath>'
+    + '</defs>'
+    /* 落地阴影 */
+    + '<ellipse cx="120" cy="222" rx="58" ry="8.5" fill="#8C78AA" opacity=".15"/>'
+    /* 耳朵 */
+    + ears
+    /* 头 */
+    + '<path d="' + IP_HEAD_PATH + '" fill="url(#' + u + 'f)" stroke="' + L + '" stroke-width="5" stroke-linejoin="round"/>'
+    + '<g clip-path="url(#' + u + 'c)">'
+    +   '<path d="' + IP_HEAD_PATH + '" fill="url(#' + u + 's)"/>'
+    +   marks
+    /* 腮红 */
+    +   '<ellipse cx="76" cy="156" rx="19" ry="12" fill="' + B + '" opacity=".42"/>'
+    +   '<ellipse cx="164" cy="156" rx="19" ry="12" fill="' + B + '" opacity=".42"/>'
+    +   '<ellipse cx="76" cy="156" rx="11" ry="6.5" fill="' + B + '" opacity=".38"/>'
+    +   '<ellipse cx="164" cy="156" rx="11" ry="6.5" fill="' + B + '" opacity=".38"/>'
+    + '</g>'
+    /* 眼睛 */
+    + '<g class="ip-eye">'
+    +   '<ellipse cx="94" cy="126" rx="11.5" ry="14.5" fill="#3A3350"/>'
+    +   '<ellipse cx="98" cy="119" rx="4.6" ry="5.4" fill="#FFFFFF" opacity=".96"/>'
+    +   '<ellipse cx="90" cy="133" rx="2.4" ry="2.8" fill="#FFFFFF" opacity=".5"/>'
+    + '</g>'
+    + '<g class="ip-eye">'
+    +   '<ellipse cx="146" cy="126" rx="11.5" ry="14.5" fill="#3A3350"/>'
+    +   '<ellipse cx="150" cy="119" rx="4.6" ry="5.4" fill="#FFFFFF" opacity=".96"/>'
+    +   '<ellipse cx="142" cy="133" rx="2.4" ry="2.8" fill="#FFFFFF" opacity=".5"/>'
+    + '</g>'
+    /* 鼻 */
+    + (s.__key === 'bird'
+        ? '<path d="M120 148 L 134 156 L 120 164 Z" fill="' + E + '" stroke="' + L + '" stroke-width="3" stroke-linejoin="round"/>'
+        : s.__key === 'koala'
+        ? '<ellipse cx="120" cy="152" rx="12" ry="9" fill="#4E4660" opacity=".9"/>'
+        : '<path d="M113 148 C 113 144, 127 144, 127 148 C 127 154, 120 158, 120 158 C 120 158, 113 154, 113 148 Z" fill="' + E + '" stroke="' + L + '" stroke-width="2.6" stroke-linejoin="round"/>')
+    /* 嘴 */
+    + '<path class="ip-mouth" d="M110 164 Q 120 174 130 164" fill="none" stroke="#6B6280" stroke-width="3.6" stroke-linecap="round"/>'
+    + (s.__key === 'puppy'
+        ? '<path d="M114 172 Q 120 184 126 172 Z" fill="#FF8FA8" stroke="#E87C96" stroke-width="2.4" stroke-linejoin="round"/>'
+        : '')
+    + '</svg>';
+  return svg;
+}
+
+/* --- 眨眼 / 摆耳 定时器 --- */
+var ipTimers = [];
+function clearIpTimers(){
+  for(var i=0;i<ipTimers.length;i++) clearTimeout(ipTimers[i]);
+  ipTimers = [];
+}
+
+function startIpAnimation(stageEl){
+  var svg = stageEl.querySelector('svg');
+  if(!svg) return;
+
+  var eyes = svg.querySelectorAll('.ip-eye ellipse');
+  var mouth = svg.querySelector('.ip-mouth');
+  var ears = svg.querySelectorAll('.ip-ear');
+
+  /* 按比例缩放所有眼睛部件，闭眼时高光同步收没，不会留下白点 */
+  function setEye(k){
+    for(var i=0;i<eyes.length;i++){
+      var el = eyes[i];
+      if(el.__ry0 == null) el.__ry0 = parseFloat(el.getAttribute('ry')) || 12;
+      el.setAttribute('ry', (el.__ry0 * k).toFixed(2));
+    }
+  }
+  function blink(){
+    setEye(0.1);
+    var t = setTimeout(function(){ setEye(1); }, 130);
+    ipTimers.push(t);
+    var n = setTimeout(blink, 2600 + Math.random() * 2600);
+    ipTimers.push(n);
+  }
+  var s0 = setTimeout(blink, 1200 + Math.random() * 1500);
+  ipTimers.push(s0);
+
+  function wiggle(){
+    for(var i=0;i<ears.length;i++){
+      (function(el){
+        var cx = el.getAttribute('data-cx') || 120;
+        var cy = el.getAttribute('data-cy') || 100;
+        var dir = (i % 2 === 0) ? 1 : -1;
+        var deg = dir * (3.5 + Math.random() * 3);
+        el.setAttribute('transform', 'rotate(' + deg + ' ' + cx + ' ' + cy + ')');
+        var back = setTimeout(function(){
+          el.setAttribute('transform', 'rotate(0 ' + cx + ' ' + cy + ')');
+        }, 520);
+        ipTimers.push(back);
+      })(ears[i]);
+    }
+    var n = setTimeout(wiggle, 2200 + Math.random() * 1800);
+    ipTimers.push(n);
+  }
+  var s1 = setTimeout(wiggle, 900);
+  ipTimers.push(s1);
+
+  return {mouth: mouth};
+}
+
+/* =========================================================
+   7. 页面状态 & DOM
+   ========================================================= */
+var $ = function(id){ return document.getElementById(id); };
+
+var state = { index:0, answers:{}, birthMonth:'', birthDay:'', zodiacKey:-1, advTimer:null };
+var lastResult = null;
+var currentStageHandles = [];
+
+function showPage(id){
+  var pages = document.querySelectorAll('.page');
+  for(var i=0;i<pages.length;i++) pages[i].classList.remove('active');
+  $(id).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+var toastTimer = null;
+function toast(msg, ms){
+  var el = $('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  if(toastTimer) clearTimeout(toastTimer);
+  toastTimer = setTimeout(function(){ el.classList.remove('show'); }, ms || 1800);
+}
+
+/* ---- 生日下拉 ---- */
+(function initBirth(){
+  var mm = $('birthMonth'), dd = $('birthDay');
+  var i;
+  for(i=1;i<=12;i++){
+    var o = document.createElement('option');
+    o.value = i; o.textContent = i;
+    mm.appendChild(o);
+  }
+  for(i=1;i<=31;i++){
+    var o2 = document.createElement('option');
+    o2.value = i; o2.textContent = i;
+    dd.appendChild(o2);
+  }
+  mm.onchange = function(){
+    state.birthMonth = mm.value;
+    dropZodiacPick();          /* 改生日 → 手选星座让位 */
+  };
+  dd.onchange = function(){
+    state.birthDay = dd.value;
+    dropZodiacPick();
+  };
+})();
+
+/* ---- 直接选星座 ---- */
+/* 展示顺序按自然年走：白羊→双鱼 */
+var ZODIAC_GRID  = [2,3,4,5,6,7,8,9,10,11,0,1];
+var ZODIAC_GLYPH = ['♒','♓','♈','♉','♊','♋','♌','♍','♎','♏','♐','♑'];
+
+function syncZodiacBtn(){
+  var btn = $('btnZodiacPick'), txt = $('zodiacPickTxt');
+  if(!btn || !txt) return;
+  if(state.zodiacKey >= 0){
+    var z = zodiacConfig[state.zodiacKey];
+    txt.textContent = '已选 ' + z.name + ' ' + ZODIAC_GLYPH[state.zodiacKey];
+    btn.classList.add('picked');
+  }else{
+    txt.textContent = '没有具体生日？直接选星座';
+    btn.classList.remove('picked');
+  }
+}
+
+/* 填了生日就清掉手选星座，两者不留歧义 */
+function dropZodiacPick(){
+  if(state.zodiacKey >= 0){
+    state.zodiacKey = -1;
+    syncZodiacBtn();
+    closeZodiacSheet();
+  }
+}
+
+function buildZodiacGrid(){
+  var g = $('zsGrid');
+  if(!g) return;
+  g.innerHTML = '';
+  for(var i=0;i<ZODIAC_GRID.length;i++){
+    (function(idx){
+      var z = zodiacConfig[idx];
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'zs-item' + (state.zodiacKey === idx ? ' on' : '');
+      b.innerHTML = '<i>' + ZODIAC_GLYPH[idx] + '</i><span>' + z.name.replace('座','') + '</span>';
+      b.onclick = function(){ pickZodiac(idx); };
+      g.appendChild(b);
+    })(ZODIAC_GRID[i]);
+  }
+}
+
+function openZodiacSheet(){
+  buildZodiacGrid();
+  $('zodiacLayer').hidden = false;
+}
+
+function closeZodiacSheet(){
+  var l = $('zodiacLayer');
+  if(l) l.hidden = true;
+}
+
+function pickZodiac(idx){
+  state.zodiacKey = idx;
+  var z = zodiacConfig[idx];
+  /* 手选星座与生日互斥，选星座时清空生日 */
+  state.birthMonth = '';
+  state.birthDay = '';
+  var mm = $('birthMonth'), dd = $('birthDay');
+  if(mm) mm.value = '';
+  if(dd) dd.value = '';
+  syncZodiacBtn();
+  closeZodiacSheet();
+  toast('已选 ' + z.name + '，' + z.desc);
+}
+
+(function initZodiacPick(){
+  var btn = $('btnZodiacPick');
+  if(btn) btn.onclick = openZodiacSheet;
+  var mask = $('zodiacMask');
+  if(mask) mask.onclick = closeZodiacSheet;
+  var clr = $('btnZodiacClear');
+  if(clr) clr.onclick = function(){
+    state.zodiacKey = -1;
+    syncZodiacBtn();
+    closeZodiacSheet();
+    toast('已取消星座选择');
+  };
+  syncZodiacBtn();
+})();
+
+/* ---- 首页预览形象 ---- */
+(function initPreview(){
+  var cells = document.querySelectorAll('[data-preview]');
+  for(var i=0;i<cells.length;i++){
+    cells[i].innerHTML = buildIpSvg(cells[i].getAttribute('data-preview'));
+  }
+})();
+
+/* =========================================================
+   8. 答题
+   ========================================================= */
+var OPTIONS = [
+  {val:1, label:'非常不符合'},
+  {val:2, label:'不太符合'},
+  {val:3, label:'一般'},
+  {val:4, label:'比较符合'},
+  {val:5, label:'非常符合'}
+];
+
+function renderQuestion(){
+  var q = questionConfig[state.index];
+  var qIndex = state.index;
+  var answered = countAnswered(state.answers);
+
+  $('qcount').textContent = (state.index + 1);
+  $('qidx').textContent = (state.index + 1 < 10 ? '0' : '') + (state.index + 1);
+  $('qtext').textContent = q.text;
+  $('pbar').style.width = Math.round(answered / 30 * 100) + '%';
+
+  var box = $('optList');
+  box.innerHTML = '';
+  for(var i=0;i<OPTIONS.length;i++){
+    (function(o){
+      var b = document.createElement('button');
+      b.className = 'opt';
+      b.type = 'button';
+      if(state.answers[q.id] === o.val) b.className = 'opt on';
+      b.innerHTML = '<span class="dot"></span><span>'+o.label+'</span>';
+      b.onclick = function(){ choose(o.val, qIndex); };
+      box.appendChild(b);
+    })(OPTIONS[i]);
+  }
+
+  $('btnPrev').disabled = (state.index === 0);
+  var isLast = (state.index === questionConfig.length - 1);
+  $('btnNext').textContent = isLast ? '查看完整报告' : '下一题';
+
+  var showQuick = (answered >= 12 && answered < 30);
+  $('quickWrap').hidden = !showQuick;
+}
+
+function clearAdvTimer(){
+  if(state.advTimer){
+    clearTimeout(state.advTimer);
+    state.advTimer = null;
+  }
+}
+
+function choose(val, at){
+  /* 迟到的点击：选项已过期（页面已翻到下一题），直接丢弃，避免错题写入 + 跳题 */
+  if(at != null && at !== state.index) return;
+
+  var q = questionConfig[state.index];
+  state.answers[q.id] = val;
+
+  var opts = $('optList').children;
+  for(var i=0;i<opts.length;i++) opts[i].classList.remove('on');
+  if(opts[val - 1]) opts[val - 1].classList.add('on');
+
+  $('pbar').style.width = Math.round(countAnswered(state.answers) / 30 * 100) + '%';
+
+  /* 连点保护：先撤销上一次排队的前进，保证一次答题只前进一格 */
+  clearAdvTimer();
+
+  var isLast = (state.index === questionConfig.length - 1);
+  var fromIndex = state.index;
+  state.advTimer = setTimeout(function(){
+    state.advTimer = null;
+    /* 排队期间被其他入口翻页了，本次前进作废 */
+    if(state.index !== fromIndex) return;
+    if(isLast) { tryShowResult(true); }
+    else { state.index++; renderQuestion(); }
+  }, 260);
+}
+
+function goNext(){
+  clearAdvTimer();
+  var q = questionConfig[state.index];
+  if(state.answers[q.id] == null){
+    toast('先选一个答案喵～');
+    return;
+  }
+  if(state.index === questionConfig.length - 1){
+    tryShowResult(true);
+  }else{
+    state.index++;
+    renderQuestion();
+  }
+}
+
+function goPrev(){
+  clearAdvTimer();
+  if(state.index === 0) return;
+  state.index--;
+  renderQuestion();
+}
+
+$('btnStart').onclick = function(){
+  clearAdvTimer();
+  state.index = 0;
+  state.answers = {};
+  state.birthMonth = $('birthMonth').value;
+  state.birthDay = $('birthDay').value;
+  renderQuestion();
+  showPage('page-quiz');
+};
+
+$('btnNext').onclick = goNext;
+$('btnPrev').onclick = goPrev;
+
+$('btnBackHome').onclick = function(){
+  clearAdvTimer();
+  showPage('page-welcome');
+};
+
+$('btnQuickResult').onclick = function(){
+  tryShowResult(false);
+};
+
+/* =========================================================
+   9. 结果页
+   ========================================================= */
+function tryShowResult(isFinal){
+  clearAdvTimer();
+  var answered = countAnswered(state.answers);
+
+  if(answered < 12){
+    toast('至少答完 12 题才能生成报告喵～');
+    return;
+  }
+
+  var res = runTest(state.answers, state.birthMonth, state.birthDay, state.zodiacKey);
+
+  if(!res.ok){
+    toast(res.msg || '答卷无效');
+    /* 无效答卷：回到第一题重答 */
+    state.index = 0;
+    state.answers = {};
+    renderQuestion();
+    showPage('page-quiz');
+    return;
+  }
+
+  lastResult = res;
+  renderResult(res);
+  showPage('page-result');
+}
+
+var MODULE_ICONS = {trait:'✦', strength:'✧', weakness:'◇', career:'✿', love:'♡'};
+
+function renderResult(res){
+  $('resCode').textContent = res.mbti.code;
+  $('resName').textContent = res.mbti.name;
+
+  $('resBadge').textContent = res.isFreeVersion ? '主副双人格简版' : '主副双人格完整版';
+
+  /* IP 形象 */
+  clearIpTimers();
+  var mainKey = res.mbti.mainKey, subKey = res.mbti.subKey;
+  $('ipMain').innerHTML = buildIpSvg(mainKey);
+  $('ipSub').innerHTML = buildIpSvg(subKey);
+
+  /* 主副标签：底色取各自毛色 */
+  var st1 = IP_STYLE[mainKey] || IP_STYLE.cat;
+  var st2 = IP_STYLE[subKey] || IP_STYLE.cat;
+  var tm = $('tagMain'), ts = $('tagSub');
+  tm.textContent = '主人格 · ' + res.mbti.main.name;
+  tm.style.background = st1.fur;
+  tm.style.color = '#6E5460';
+  ts.textContent = '副人格 · ' + res.mbti.sub.name;
+  ts.style.background = st2.fur2;
+  ts.style.color = '#5E4E62';
+
+  /* 六维雷达 */
+  var radarItems = [];
+  for(var r = 0; r < POSTER_BAR_DIMS.length; r++){
+    var dv = dimView(POSTER_BAR_DIMS[r]);
+    var pv = (res.pct && res.pct[dv.key] != null) ? res.pct[dv.key] : 50;
+    radarItems.push({label:dv.label, val:pv, color:dv.bar});
+  }
+  $('radarBox').innerHTML = buildRadarSvg(radarItems);
+
+  /* 性格总结：标题层 + 正文层 */
+  $('sumHead').textContent = POSTER_HEADLINE[res.mbti.code] || ('你是' + res.mbti.name);
+  $('sumBody').textContent =
+    firstClauses(res.mbti.main.desc, 2) + '，也' + firstClauses(res.mbti.sub.desc, 2) + '。';
+
+  /* 关键词胶囊 */
+  var pills = pickPills(res.pct);
+  var pb = $('pillsBox');
+  pb.innerHTML = '';
+  for(var p = 0; p < pills.length; p++){
+    var pe = document.createElement('span');
+    pe.className = 'pill';
+    pe.textContent = pills[p].text;
+    pe.style.background = pills[p].bg;
+    pe.style.color = pills[p].fg;
+    pb.appendChild(pe);
+  }
+
+  var ms = $('ipMainStage'), ss = $('ipSubStage');
+
+  /* 入场弹跳：animation 无 fill-mode，动画不跑也停在自然的 scale(1) 可见态 */
+  ms.classList.remove('pop');
+  ss.classList.remove('pop');
+  void ms.offsetWidth;
+  ms.classList.add('pop');
+
+  var t1b = setTimeout(function(){ ss.classList.add('pop'); }, 160);
+  var t2 = setTimeout(function(){
+    currentStageHandles = [startIpAnimation(ms), startIpAnimation(ss)];
+  }, 560);
+  ipTimers.push(t1b); ipTimers.push(t2);
+
+  /* 模块 */
+  var list = $('moduleList');
+  list.innerHTML = '';
+
+  if(res.isFreeVersion){
+    var tipCard = document.createElement('div');
+    tipCard.className = 'module';
+    tipCard.innerHTML =
+      '<div class="m-icon">🔓</div>' +
+      '<div class="m-body">' +
+        '<div class="m-title">完整报告待解锁</div>' +
+        '<div class="m-text">你已答 '+res.answered+' / 30 题。答满 30 题可解锁「特质 · 优势 · 短板 · 事业方向 · 感情模式」五维完整分析。</div>' +
+      '</div>';
+    list.appendChild(tipCard);
+  }else{
+    for(var i=0;i<res.modules.length;i++){
+      var m = res.modules[i];
+      var card = document.createElement('div');
+      card.className = 'module';
+      card.innerHTML =
+        '<div class="m-icon">'+(MODULE_ICONS[m.key] || '✦')+'</div>' +
+        '<div class="m-body">' +
+          '<div class="m-title">'+m.title+'</div>' +
+          '<div class="m-text">'+m.text+'</div>' +
+        '</div>';
+      list.appendChild(card);
+    }
+  }
+
+  /* 星座 */
+  var zc = $('zodiacCard');
+  if(res.zodiac){
+    zc.hidden = false;
+    $('zodiacMain').textContent = res.zodiac.name + ' · ' + res.zodiac.desc;
+    $('zodiacDesc').textContent = '星座内容仅作趣味参考，不参与人格计算结果喵。';
+  }else{
+    zc.hidden = true;
+  }
+
+  /* 版本提示 */
+  var vt = $('verTip');
+  if(res.isFreeVersion){
+    vt.hidden = false;
+    vt.innerHTML = '当前为<b>简版报告</b>，已答 ' + res.answered + ' / 30 题';
+  }else{
+    vt.hidden = true;
+  }
+
+  /* 简版：把「继续答题」提到主位，海报降级 */
+  $('resActions').classList.toggle('is-free', !!res.isFreeVersion);
+  var br = $('btnResume');
+  if(res.isFreeVersion){
+    br.hidden = false;
+    br.innerHTML = '继续答完剩下的 ' + (30 - res.answered) + ' 题<span class="arrow">›</span>';
+  }else{
+    br.hidden = true;
+  }
+}
+
+/* 从简版结果页返回答题，保留已答进度，落回第一道没答的题 */
+function resumeQuiz(){
+  clearAdvTimer();
+  var idx = -1;
+  for(var i=0;i<questionConfig.length;i++){
+    if(state.answers[questionConfig[i].id] == null){ idx = i; break; }
+  }
+  if(idx < 0) idx = questionConfig.length - 1;
+  state.index = idx;
+  renderQuestion();
+  showPage('page-quiz');
+  toast('接着答，已完成 ' + countAnswered(state.answers) + ' / 30 题');
+}
+
+/* IP 点击互动 */
+function bindIpClick(el){
+  el.addEventListener('click', function(){
+    var svg = el.querySelector('svg');
+    if(!svg) return;
+    var mouth = svg.querySelector('.ip-mouth');
+    var eyes = svg.querySelectorAll('.ip-eye ellipse');
+    var face = ['M107 161 q13 12 26 0', 'M106 158 q14 18 28 0', 'M108 163 q12 6 24 0'];
+    var cur = mouth.getAttribute('d');
+    var next = face[0];
+    for(var i=0;i<face.length;i++){
+      if(face[i] === cur){ next = face[(i + 1) % face.length]; break; }
+    }
+    mouth.setAttribute('d', next);
+    for(var j=0;j<eyes.length;j++) eyes[j].setAttribute('ry', '9');
+    setTimeout(function(){
+      for(var j=0;j<eyes.length;j++) eyes[j].setAttribute('ry', '12.5');
+    }, 420);
+
+    var key = null;
+    if(lastResult){
+      key = (el.id === 'ipMain') ? lastResult.mbti.mainKey : lastResult.mbti.subKey;
+    }
+    var s = IP_STYLE[key] || IP_STYLE.cat;
+    var span = document.createElement('div');
+    span.className = 'ip-emoji';
+    span.textContent = s.emoji;
+    el.parentNode.appendChild(span);
+    setTimeout(function(){
+      if(span.parentNode) span.parentNode.removeChild(span);
+    }, 950);
+  });
+}
+bindIpClick($('ipMain'));
+bindIpClick($('ipSub'));
+
+$('btnResume').onclick = resumeQuiz;
+
+$('btnRestart').onclick = function(){
+  clearIpTimers();
+  state.index = 0;
+  state.answers = {};
+  renderQuestion();
+  showPage('page-welcome');
+};
+
+/* =========================================================
+   10. 海报（原生 Canvas，微信可长按保存）
+   ========================================================= */
+var FF_CN = '"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif';
+
+function roundRect(ctx, x, y, w, h, r){
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(x + w, y, x + w, y + h, r);
+  ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r);
+  ctx.arcTo(x, y, x + w, y, r);
+  ctx.closePath();
+}
+
+function wrapText(ctx, text, x, y, maxW, lh){
+  var line = '';
+  for(var i=0;i<text.length;i++){
+    var ch = text.charAt(i);
+    if(ctx.measureText(line + ch).width > maxW && line){
+      ctx.fillText(line, x, y);
+      y += lh;
+      line = ch;
+    }else{
+      line += ch;
+    }
+  }
+  if(line){ ctx.fillText(line, x, y); y += lh; }
+  return y;
+}
+
+function drawAvatar(ctx, key, cx, cy, r){
+  var s = IP_STYLE[key] || IP_STYLE.cat;
+  var F = s.fur, F2 = s.fur2, E = s.ear, B = s.blush, L = s.line || F2;
+  var lw = Math.max(2, r * 0.05);
+  ctx.save();
+  ctx.lineJoin = 'round';
+  ctx.lineCap = 'round';
+
+  /* 落地阴影 */
+  ctx.beginPath();
+  ctx.ellipse(cx, cy + r * 1.04, r * 0.74, r * 0.1, 0, 0, Math.PI * 2);
+  ctx.fillStyle = 'rgba(140,120,170,.15)';
+  ctx.fill();
+
+  /* ---------- 耳朵 ---------- */
+  ctx.fillStyle = F;
+  ctx.strokeStyle = L;
+  ctx.lineWidth = lw;
+
+  function earTri(ax, ay, bx, by, px, py, ibx, iby, ipx, ipy){
+    ctx.beginPath();
+    ctx.moveTo(cx + ax * r, cy + ay * r);
+    ctx.lineTo(cx + bx * r, cy + by * r);
+    ctx.lineTo(cx + px * r, cy + py * r);
+    ctx.closePath();
+    ctx.fill(); ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(cx + ibx * r, cy + iby * r);
+    ctx.lineTo(cx + ipx * r, cy + ipy * r);
+    ctx.lineTo(cx + bx * r * 0.86, cy + by * r * 0.92);
+    ctx.closePath();
+    ctx.globalAlpha = 0.5; ctx.fillStyle = E; ctx.fill(); ctx.globalAlpha = 1;
+    ctx.fillStyle = F;
+  }
+
+  if(s.kind === 'point' || s.kind === 'point-tall'){
+    var tall = (s.kind === 'point-tall');
+    var ty = tall ? -1.44 : -1.29;
+    var tx = tall ? -0.88 : -0.825;
+    earTri(-0.325, -0.737, -0.65, -0.437, tx, ty, -0.20, -0.74, tx + 0.10, ty + 0.16);
+    earTri( 0.325, -0.737,  0.65, -0.437, -tx, ty,  0.20, -0.74, -(tx + 0.10), ty + 0.16);
+  } else if(s.kind === 'round' || s.kind === 'biground'){
+    var big = (s.kind === 'biground');
+    var er = big ? r * 0.56 : r * 0.4;
+    var ex = big ? r * 1.02 : r * 0.7;
+    var ey = big ? -r * 0.36 : -r * 0.74;
+    var lx = cx - ex, rx2 = cx + ex, ly = cy + ey;
+    ctx.beginPath(); ctx.arc(lx, ly, er, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+    ctx.beginPath(); ctx.arc(rx2, ly, er, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+    ctx.globalAlpha = 0.4; ctx.fillStyle = E;
+    ctx.beginPath(); ctx.arc(lx, ly, er * 0.6, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(rx2, ly, er * 0.6, 0, Math.PI * 2); ctx.fill();
+    ctx.globalAlpha = 1; ctx.fillStyle = F;
+  } else if(s.kind === 'drop'){
+    ctx.beginPath(); ctx.ellipse(cx - r * 0.72, cy - r * 0.16, r * 0.34, r * 0.6, -0.16, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+    ctx.beginPath(); ctx.ellipse(cx + r * 0.72, cy - r * 0.16, r * 0.34, r * 0.6,  0.16, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+    ctx.globalAlpha = 0.35; ctx.fillStyle = E;
+    ctx.beginPath(); ctx.ellipse(cx - r * 0.72, cy - r * 0.1, r * 0.18, r * 0.38, -0.16, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(cx + r * 0.72, cy - r * 0.1, r * 0.18, r * 0.38,  0.16, 0, Math.PI * 2); ctx.fill();
+    ctx.globalAlpha = 1; ctx.fillStyle = F;
+  } else if(s.kind === 'fluff'){
+    var pts = [[-0.58,-0.84,0.32],[-0.2,-1.02,0.33],[0.2,-1.02,0.33],[0.58,-0.84,0.32],[-0.86,-0.44,0.26],[0.86,-0.44,0.26]];
+    for(var i=0;i<pts.length;i++){
+      ctx.beginPath(); ctx.arc(cx + r*pts[i][0], cy + r*pts[i][1], r*pts[i][2], 0, Math.PI*2); ctx.fill(); ctx.stroke();
+    }
+  } else if(s.kind === 'tuft'){
+    ctx.beginPath();
+    ctx.moveTo(cx - r * 0.1, cy - r * 0.92);
+    ctx.quadraticCurveTo(cx - r * 0.24, cy - r * 1.46, cx + r * 0.06, cy - r * 1.6);
+    ctx.quadraticCurveTo(cx - r * 0.01, cy - r * 1.24, cx + r * 0.1, cy - r * 0.9);
+    ctx.closePath(); ctx.fill(); ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(cx + r * 0.16, cy - r * 0.88);
+    ctx.quadraticCurveTo(cx + r * 0.36, cy - r * 1.22, cx + r * 0.56, cy - r * 1.26);
+    ctx.quadraticCurveTo(cx + r * 0.34, cy - r * 1.06, cx + r * 0.28, cy - r * 0.84);
+    ctx.closePath(); ctx.fill(); ctx.stroke();
+  }
+
+  /* ---------- 头（上亮下深的竖向渐变） ---------- */
+  var hg = ctx.createLinearGradient(cx, cy - r, cx, cy + r);
+  hg.addColorStop(0, F);
+  hg.addColorStop(0.62, F);
+  hg.addColorStop(1, F2);
+  ctx.beginPath();
+  ctx.ellipse(cx, cy, r, r * 0.94, 0, 0, Math.PI * 2);
+  ctx.fillStyle = hg; ctx.fill();
+  ctx.strokeStyle = L; ctx.lineWidth = lw; ctx.stroke();
+
+  /* 头顶柔光 */
+  var sg = ctx.createRadialGradient(cx - r * 0.34, cy - r * 0.5, 0, cx - r * 0.34, cy - r * 0.5, r * 1.12);
+  sg.addColorStop(0, 'rgba(255,255,255,.5)');
+  sg.addColorStop(1, 'rgba(255,255,255,0)');
+  ctx.beginPath();
+  ctx.ellipse(cx, cy, r * 0.98, r * 0.92, 0, 0, Math.PI * 2);
+  ctx.fillStyle = sg; ctx.fill();
+
+  /* ---------- 花纹 ---------- */
+  ctx.save();
+  ctx.beginPath();
+  ctx.ellipse(cx, cy, r * 0.98, r * 0.92, 0, 0, Math.PI * 2);
+  ctx.clip();
+
+  if(key === 'cat'){
+    ctx.strokeStyle = F2; ctx.lineWidth = r * 0.075; ctx.globalAlpha = 0.55;
+    ctx.beginPath(); ctx.moveTo(cx, cy - r * 0.86); ctx.lineTo(cx, cy - r * 0.58); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(cx - r * 0.16, cy - r * 0.82); ctx.lineTo(cx - r * 0.08, cy - r * 0.6); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(cx + r * 0.16, cy - r * 0.82); ctx.lineTo(cx + r * 0.08, cy - r * 0.6); ctx.stroke();
+    ctx.globalAlpha = 0.7; ctx.lineWidth = r * 0.045;
+    ctx.beginPath(); ctx.moveTo(cx - r * 1.05, cy + r * 0.1); ctx.lineTo(cx - r * 0.7, cy + r * 0.1); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(cx - r * 1.05, cy + r * 0.24); ctx.lineTo(cx - r * 0.72, cy + r * 0.24); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(cx + r * 1.05, cy + r * 0.1); ctx.lineTo(cx + r * 0.7, cy + r * 0.1); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(cx + r * 1.05, cy + r * 0.24); ctx.lineTo(cx + r * 0.72, cy + r * 0.24); ctx.stroke();
+    ctx.globalAlpha = 1;
+  } else if(key === 'panther'){
+    ctx.fillStyle = F2; ctx.globalAlpha = 0.5;
+    ctx.beginPath(); ctx.arc(cx - r * 0.62, cy - r * 0.5, r * 0.075, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(cx - r * 0.36, cy - r * 0.66, r * 0.055, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(cx + r * 0.62, cy - r * 0.5, r * 0.075, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(cx + r * 0.36, cy - r * 0.66, r * 0.055, 0, Math.PI * 2); ctx.fill();
+    ctx.globalAlpha = 1;
+  } else if(key === 'fox'){
+    ctx.fillStyle = 'rgba(255,255,255,.62)';
+    ctx.beginPath();
+    ctx.moveTo(cx, cy - r * 0.98);
+    ctx.bezierCurveTo(cx - r * 0.34, cy - r * 0.98, cx - r * 0.56, cy - r * 0.72, cx - r * 0.58, cy - r * 0.4);
+    ctx.bezierCurveTo(cx - r * 0.3, cy - r * 0.58, cx + r * 0.3, cy - r * 0.58, cx + r * 0.58, cy - r * 0.4);
+    ctx.bezierCurveTo(cx + r * 0.56, cy - r * 0.72, cx + r * 0.34, cy - r * 0.98, cx, cy - r * 0.98);
+    ctx.fill();
+    ctx.beginPath(); ctx.ellipse(cx, cy + r * 0.66, r * 0.52, r * 0.34, 0, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(255,255,255,.72)'; ctx.fill();
+  } else if(key === 'bear' || key === 'koala'){
+    ctx.beginPath(); ctx.ellipse(cx, cy + r * 0.42, r * 0.58, r * 0.42, 0, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(255,255,255,.32)'; ctx.fill();
+  } else if(key === 'puppy'){
+    ctx.fillStyle = 'rgba(255,255,255,.42)';
+    ctx.beginPath();
+    ctx.moveTo(cx, cy - r * 0.95);
+    ctx.bezierCurveTo(cx - r * 0.2, cy - r * 0.95, cx - r * 0.36, cy - r * 0.8, cx - r * 0.38, cy - r * 0.6);
+    ctx.bezierCurveTo(cx - r * 0.2, cy - r * 0.74, cx + r * 0.2, cy - r * 0.74, cx + r * 0.38, cy - r * 0.6);
+    ctx.bezierCurveTo(cx + r * 0.36, cy - r * 0.8, cx + r * 0.2, cy - r * 0.95, cx, cy - r * 0.95);
+    ctx.fill();
+  } else if(key === 'sheep' || key === 'bird' || key === 'turtle'){
+    ctx.beginPath(); ctx.ellipse(cx, cy - r * 0.68, r * 0.62, r * 0.32, 0, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(255,255,255,.4)'; ctx.fill();
+  }
+  ctx.restore();
+  ctx.globalAlpha = 1;
+
+  /* ---------- 腮红 ---------- */
+  ctx.fillStyle = B;
+  ctx.globalAlpha = 0.42;
+  ctx.beginPath(); ctx.ellipse(cx - r * 0.56, cy + r * 0.46, r * 0.24, r * 0.15, 0, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.ellipse(cx + r * 0.56, cy + r * 0.46, r * 0.24, r * 0.15, 0, 0, Math.PI * 2); ctx.fill();
+  ctx.globalAlpha = 0.3;
+  ctx.beginPath(); ctx.ellipse(cx - r * 0.56, cy + r * 0.46, r * 0.14, r * 0.085, 0, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.ellipse(cx + r * 0.56, cy + r * 0.46, r * 0.14, r * 0.085, 0, 0, Math.PI * 2); ctx.fill();
+  ctx.globalAlpha = 1;
+
+  /* ---------- 眼睛 ---------- */
+  var ex1 = cx - r * 0.33, ex2 = cx + r * 0.33, ey = cy - r * 0.08;
+  ctx.fillStyle = '#3A3350';
+  ctx.beginPath(); ctx.ellipse(ex1, ey, r * 0.145, r * 0.185, 0, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.ellipse(ex2, ey, r * 0.145, r * 0.185, 0, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = '#FFFFFF';
+  ctx.globalAlpha = 0.96;
+  ctx.beginPath(); ctx.ellipse(ex1 + r * 0.05, ey - r * 0.075, r * 0.058, r * 0.068, 0, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.ellipse(ex2 + r * 0.05, ey - r * 0.075, r * 0.058, r * 0.068, 0, 0, Math.PI * 2); ctx.fill();
+  ctx.globalAlpha = 0.5;
+  ctx.beginPath(); ctx.arc(ex1 - r * 0.05, ey + r * 0.08, r * 0.03, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.arc(ex2 - r * 0.05, ey + r * 0.08, r * 0.03, 0, Math.PI * 2); ctx.fill();
+  ctx.globalAlpha = 1;
+
+  /* ---------- 鼻子 ---------- */
+  if(key === 'bird'){
+    ctx.fillStyle = E; ctx.strokeStyle = L; ctx.lineWidth = Math.max(1.4, lw * 0.55);
+    ctx.beginPath();
+    ctx.moveTo(cx, cy + r * 0.2);
+    ctx.lineTo(cx + r * 0.19, cy + r * 0.32);
+    ctx.lineTo(cx, cy + r * 0.44);
+    ctx.closePath(); ctx.fill(); ctx.stroke();
+  } else if(key === 'koala'){
+    ctx.fillStyle = '#4E4660'; ctx.globalAlpha = 0.9;
+    ctx.beginPath(); ctx.ellipse(cx, cy + r * 0.3, r * 0.16, r * 0.12, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.globalAlpha = 1;
+  } else {
+    ctx.fillStyle = E; ctx.strokeStyle = L; ctx.lineWidth = Math.max(1.4, lw * 0.55);
+    ctx.beginPath();
+    ctx.moveTo(cx - r * 0.1, cy + r * 0.25);
+    ctx.quadraticCurveTo(cx, cy + r * 0.2, cx + r * 0.1, cy + r * 0.25);
+    ctx.quadraticCurveTo(cx + r * 0.09, cy + r * 0.36, cx, cy + r * 0.4);
+    ctx.quadraticCurveTo(cx - r * 0.09, cy + r * 0.36, cx - r * 0.1, cy + r * 0.25);
+    ctx.closePath(); ctx.fill(); ctx.stroke();
+  }
+
+  /* ---------- 嘴 ---------- */
+  ctx.strokeStyle = '#6B6280'; ctx.lineWidth = Math.max(1.6, r * 0.048); ctx.lineCap = 'round';
+  if(key === 'bird'){
+    ctx.beginPath(); ctx.moveTo(cx - r * 0.1, cy + r * 0.5); ctx.lineTo(cx + r * 0.1, cy + r * 0.5); ctx.stroke();
+  } else {
+    ctx.beginPath();
+    ctx.moveTo(cx - r * 0.15, cy + r * 0.52);
+    ctx.quadraticCurveTo(cx - r * 0.07, cy + r * 0.64, cx, cy + r * 0.54);
+    ctx.quadraticCurveTo(cx + r * 0.07, cy + r * 0.64, cx + r * 0.15, cy + r * 0.52);
+    ctx.stroke();
+  }
+
+  /* 小狗的舌头 */
+  if(key === 'puppy'){
+    ctx.fillStyle = '#FF8FA8'; ctx.strokeStyle = '#E87C96'; ctx.lineWidth = Math.max(1.2, r * 0.03);
+    ctx.beginPath();
+    ctx.moveTo(cx - r * 0.09, cy + r * 0.62);
+    ctx.quadraticCurveTo(cx, cy + r * 0.82, cx + r * 0.09, cy + r * 0.62);
+    ctx.closePath(); ctx.fill(); ctx.stroke();
+  }
+
+  ctx.restore();
+}
+/* ---------- 海报：标语 / 维度 / 关键词 ---------- */
+var POSTER_HEADLINE = {
+  INTJ:'你是把长远局面都想透的谋略家',
+  INTP:'你是永远在追问为什么的思考者',
+  ENTJ:'你是自带指挥台的行动派',
+  ENTP:'你是点子多到停不下来的探索者',
+  INFJ:'你是温柔又有洞见的引路人',
+  INFP:'你是心里住着一整个宇宙的理想家',
+  ENFJ:'你是天生会点亮别人的领路人',
+  ENFP:'你是自带能量场的行动派',
+  ISTJ:'你是把每件事都做扎实的可靠派',
+  ISFJ:'你是默默照顾所有人的暖炉',
+  ESTJ:'你是把混乱理顺的执行者',
+  ESFJ:'你是让一群人聚在一起的黏合剂',
+  ISTP:'你是话不多但手很稳的实干家',
+  ISFP:'你是活得很有自己味道的生活家',
+  ESTP:'你是敢想敢冲的现场玩家',
+  ESFP:'你是走到哪都能点亮气氛的小太阳'
+};
+
+var DIM_VIEW = [
+  {key:'E',  label:'外向能量', hi:'外向',   lo:'内敛',   bg:'#FFE4EE', fg:'#D9688F', bar:'#FF8FB1'},
+  {key:'S',  label:'情感共感', hi:'共情',   lo:'理性',   bg:'#EDE7FA', fg:'#8468B5', bar:'#A98BD8'},
+  {key:'R',  label:'行动冲劲', hi:'行动力', lo:'求稳',   bg:'#FFEEE2', fg:'#D2833F', bar:'#F2A65E'},
+  {key:'N',  label:'探索欲',   hi:'好奇心', lo:'务实',   bg:'#E3F5EC', fg:'#4E9B76', bar:'#6FC0A0'},
+  {key:'St', label:'情绪稳定', hi:'情绪稳', lo:'细腻',   bg:'#E1F1F7', fg:'#4C8E9E', bar:'#7FC0CE'},
+  {key:'A',  label:'亲和度',   hi:'温柔',   lo:'直率',   bg:'#E4EFFC', fg:'#5A86C4', bar:'#78A6E0'},
+  {key:'P',  label:'坚持度',   hi:'有韧性', lo:'随性',   bg:'#FFF6DE', fg:'#BE9A3A', bar:'#E0BC5C'},
+  {key:'D',  label:'独立度',   hi:'有主见', lo:'爱商量',   bg:'#EFEBF6', fg:'#77709A', bar:'#9C93BE'}
+];
+
+/* 六芒星六轴：从正上方起顺时针 */
+var POSTER_BAR_DIMS = ['E','S','A','St','N','R'];
+
+function dimView(key){
+  for(var i=0;i<DIM_VIEW.length;i++){ if(DIM_VIEW[i].key === key) return DIM_VIEW[i]; }
+  return DIM_VIEW[0];
+}
+
+/* 取偏离中位最多的 2 高 + 2 低，保证正负都有 */
+function pickPills(pct){
+  var arr = [];
+  for(var i=0;i<DIM_VIEW.length;i++){
+    var d = DIM_VIEW[i];
+    var v = (pct && pct[d.key] != null) ? pct[d.key] : 50;
+    arr.push({d:d, v:v, dev:Math.abs(v-50)});
+  }
+  var hi = [], lo = [];
+  for(var a=0;a<arr.length;a++){ (arr[a].v >= 50 ? hi : lo).push(arr[a]); }
+  hi.sort(function(x,y){ return y.dev - x.dev; });
+  lo.sort(function(x,y){ return y.dev - x.dev; });
+  var picked = hi.slice(0,2).concat(lo.slice(0,2));
+  if(picked.length < 4){
+    var rest = arr.slice().sort(function(x,y){ return y.dev - x.dev; });
+    for(var b=0;b<rest.length && picked.length<4;b++){
+      if(picked.indexOf(rest[b]) < 0) picked.push(rest[b]);
+    }
+  }
+  var out = [];
+  for(var c=0;c<picked.length;c++){
+    var it = picked[c];
+    out.push({text: it.v >= 50 ? it.d.hi : it.d.lo, bg: it.d.bg, fg: it.d.fg, dev: it.dev});
+  }
+  out.sort(function(x,y){ return y.dev - x.dev; });
+  return out;
+}
+
+function firstClauses(desc, n){
+  var parts = String(desc || '').split('，');
+  var out = [];
+  for(var i=0;i<parts.length && out.length<n;i++){
+    var s = parts[i].trim();
+    if(s) out.push(s);
+  }
+  return out.join('、');
+}
+
+function measureWrap(ctx, text, maxW, lh){
+  var line = '', lines = 0;
+  for(var i=0;i<text.length;i++){
+    var ch = text.charAt(i);
+    if(ctx.measureText(line + ch).width > maxW && line){ lines++; line = ch; }
+    else line += ch;
+  }
+  if(line) lines++;
+  return lines * lh;
+}
+
+/* 六芒星雷达图 */
+function drawRadar(ctx, cx, cy, R, items){
+  var n = items.length;
+  var step = Math.PI * 2 / n;
+  var start = -Math.PI / 2;
+  var i, a, x, y;
+
+  /* 同心六边形网格 */
+  for(var ring=1; ring<=4; ring++){
+    var rr = R * ring / 4;
+    ctx.beginPath();
+    for(i=0;i<n;i++){
+      a = start + step * i;
+      x = cx + Math.cos(a) * rr;
+      y = cy + Math.sin(a) * rr;
+      if(i===0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    }
+    ctx.closePath();
+    if(ring === 4){
+      ctx.fillStyle = 'rgba(252,248,255,.9)'; ctx.fill();
+      ctx.strokeStyle = 'rgba(186,174,210,.62)'; ctx.lineWidth = 2;
+    }else{
+      ctx.strokeStyle = 'rgba(208,200,226,.45)'; ctx.lineWidth = 1.4;
+    }
+    ctx.stroke();
+  }
+
+  /* 轴线 */
+  for(i=0;i<n;i++){
+    a = start + step * i;
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(cx + Math.cos(a) * R, cy + Math.sin(a) * R);
+    ctx.strokeStyle = 'rgba(208,200,226,.55)';
+    ctx.lineWidth = 1.4;
+    ctx.stroke();
+  }
+
+  /* 数据面 */
+  var pts = [];
+  for(i=0;i<n;i++){
+    a = start + step * i;
+    var v = Math.max(8, Math.min(100, items[i].val)) / 100;
+    pts.push([cx + Math.cos(a) * R * v, cy + Math.sin(a) * R * v]);
+  }
+
+  ctx.beginPath();
+  for(i=0;i<pts.length;i++){
+    if(i===0) ctx.moveTo(pts[i][0], pts[i][1]);
+    else ctx.lineTo(pts[i][0], pts[i][1]);
+  }
+  ctx.closePath();
+
+  var rgd = ctx.createRadialGradient(cx, cy, 8, cx, cy, R);
+  rgd.addColorStop(0, 'rgba(255,150,182,.62)');
+  rgd.addColorStop(0.6, 'rgba(220,160,210,.48)');
+  rgd.addColorStop(1, 'rgba(169,139,216,.46)');
+  ctx.fillStyle = rgd;
+  ctx.fill();
+  ctx.strokeStyle = '#FF8FB1';
+  ctx.lineWidth = 3;
+  ctx.lineJoin = 'round';
+  ctx.stroke();
+
+  /* 顶点小圆 */
+  for(i=0;i<pts.length;i++){
+    ctx.beginPath();
+    ctx.arc(pts[i][0], pts[i][1], 5.5, 0, Math.PI * 2);
+    ctx.fillStyle = '#ffffff';
+    ctx.fill();
+    ctx.strokeStyle = items[i].color || '#FF8FB1';
+    ctx.lineWidth = 3;
+    ctx.stroke();
+  }
+
+  /* 轴标签：名称 + 数值 */
+  var oldBase = ctx.textBaseline;
+  ctx.textBaseline = 'middle';
+  for(i=0;i<n;i++){
+    a = start + step * i;
+    var lx = cx + Math.cos(a) * (R + 32);
+    var ly = cy + Math.sin(a) * (R + 32);
+    ctx.textAlign = 'center';
+    ctx.font = '600 17px ' + FF_CN;
+    ctx.fillStyle = '#7C7490';
+    ctx.fillText(items[i].label, lx, ly - 10);
+    ctx.font = '800 18px ' + FF_CN;
+    ctx.fillStyle = items[i].color || '#D2708F';
+    ctx.fillText(items[i].val + '', lx, ly + 11);
+  }
+  ctx.textBaseline = oldBase || 'alphabetic';
+}
+
+/* 页面内 SVG 六芒星：与 Canvas 版 drawRadar 同款视觉 */
+function buildRadarSvg(items){
+  var S = 280, cx = 140, cy = 140, R = 72, LR = 100;
+  var n = items ? items.length : 0;
+  if(!n) return '';
+
+  var step = Math.PI * 2 / n, start = -Math.PI / 2;
+  var i, a, rr, x, y, ring, pts, v, dp, dots = '', s = '';
+
+  s += '<svg viewBox="0 0 ' + S + ' ' + S + '" xmlns="http://www.w3.org/2000/svg">';
+
+  /* 4 圈同心六边形网格 */
+  for(ring = 1; ring <= 4; ring++){
+    rr = R * ring / 4;
+    pts = [];
+    for(i = 0; i < n; i++){
+      a = start + step * i;
+      pts.push((cx + Math.cos(a) * rr).toFixed(1) + ',' + (cy + Math.sin(a) * rr).toFixed(1));
+    }
+    if(ring === 4){
+      s += '<polygon points="' + pts.join(' ') + '" fill="rgba(252,248,255,.9)" stroke="rgba(186,174,210,.62)" stroke-width="2"/>';
+    }else{
+      s += '<polygon points="' + pts.join(' ') + '" fill="none" stroke="rgba(208,200,226,.45)" stroke-width="1.4"/>';
+    }
+  }
+
+  /* 轴线 */
+  for(i = 0; i < n; i++){
+    a = start + step * i;
+    s += '<line x1="' + cx + '" y1="' + cy + '" x2="' + (cx + Math.cos(a) * R).toFixed(1) +
+         '" y2="' + (cy + Math.sin(a) * R).toFixed(1) + '" stroke="rgba(208,200,226,.55)" stroke-width="1.4"/>';
+  }
+
+  /* 数据面顶点 */
+  dp = [];
+  for(i = 0; i < n; i++){
+    a = start + step * i;
+    v = Math.max(8, Math.min(100, items[i].val)) / 100;
+    x = cx + Math.cos(a) * R * v;
+    y = cy + Math.sin(a) * R * v;
+    dp.push(x.toFixed(1) + ',' + y.toFixed(1));
+    dots += '<circle cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="5.5" fill="#fff" stroke="' +
+            (items[i].color || '#FF8FB1') + '" stroke-width="3"/>';
+  }
+
+  s += '<defs><radialGradient id="radarFill" cx="50%" cy="50%" r="50%">' +
+       '<stop offset="0%" stop-color="rgba(255,150,182,.62)"/>' +
+       '<stop offset="60%" stop-color="rgba(220,160,210,.48)"/>' +
+       '<stop offset="100%" stop-color="rgba(169,139,216,.46)"/>' +
+       '</radialGradient></defs>';
+
+  s += '<polygon points="' + dp.join(' ') + '" fill="url(#radarFill)" stroke="#FF8FB1" stroke-width="3" stroke-linejoin="round"/>';
+  s += dots;
+
+  /* 轴标签：名称 + 数值 */
+  for(i = 0; i < n; i++){
+    a = start + step * i;
+    x = cx + Math.cos(a) * LR;
+    y = cy + Math.sin(a) * LR;
+    s += '<text x="' + x.toFixed(1) + '" y="' + (y - 6).toFixed(1) +
+         '" text-anchor="middle" font-size="17" font-weight="600" fill="#7C7490">' + items[i].label + '</text>';
+    s += '<text x="' + x.toFixed(1) + '" y="' + (y + 15).toFixed(1) +
+         '" text-anchor="middle" font-size="18" font-weight="800" fill="' + (items[i].color || '#D2708F') + '">' +
+         items[i].val + '</text>';
+  }
+
+  s += '</svg>';
+  return s;
+}
+
+function buildPoster(res){
+  var W = 750, PAD = 48;
+  var innerW = W - PAD * 2;
+  var C = document.createElement('canvas');
+  C.width = W; C.height = 3200;
+  var ctx = C.getContext('2d');
+  var y = 0;
+
+  /* 背景 */
+  var g = ctx.createLinearGradient(0, 0, W, 3200);
+  g.addColorStop(0, '#FFF2F7');
+  g.addColorStop(0.38, '#F7F4FF');
+  g.addColorStop(1, '#EFFAF6');
+  ctx.fillStyle = g; ctx.fillRect(0, 0, W, 3200);
+
+  var rg = ctx.createRadialGradient(W*0.16, 90, 10, W*0.16, 90, 460);
+  rg.addColorStop(0, 'rgba(255,205,224,.60)');
+  rg.addColorStop(1, 'rgba(255,205,224,0)');
+  ctx.fillStyle = rg; ctx.fillRect(0, 0, W, 700);
+
+  var rg2 = ctx.createRadialGradient(W*0.88, 300, 10, W*0.88, 300, 400);
+  rg2.addColorStop(0, 'rgba(198,228,255,.55)');
+  rg2.addColorStop(1, 'rgba(198,228,255,0)');
+  ctx.fillStyle = rg2; ctx.fillRect(0, 0, W, 780);
+
+  /* ---- 顶部标题 ---- */
+  ctx.textAlign = 'left';
+  ctx.fillStyle = '#3F3949';
+  ctx.font = '800 46px ' + FF_CN;
+  ctx.fillText('观己人格报告', PAD, 106);
+
+  ctx.fillStyle = '#9A90A8';
+  ctx.font = '600 24px ' + FF_CN;
+  ctx.fillText('MBTI · ' + res.mbti.code + ' ' + res.mbti.name, PAD, 152);
+
+  /* 右上气泡：夹在标题与小字之间 */
+  var bubble = '主副双人格完整版';
+  ctx.font = '600 22px ' + FF_CN;
+  var bw = ctx.measureText(bubble).width + 46;
+  var bh = 46;
+  var bxb = W - PAD - bw, byb = 129 - bh / 2;
+  roundRect(ctx, bxb, byb, bw, bh, bh/2);
+  ctx.fillStyle = 'rgba(255,255,255,.94)'; ctx.fill();
+  ctx.strokeStyle = 'rgba(255,190,216,.95)'; ctx.lineWidth = 2; ctx.stroke();
+  ctx.fillStyle = '#D2708F';
+  ctx.textAlign = 'center';
+  ctx.fillText(bubble, bxb + bw/2, byb + bh/2 + 8);
+
+  /* ---- 两个正方形框 ---- */
+  var boxY = 198, boxS = 312, bGap = innerW - boxS * 2;
+  var b1 = PAD, b2 = PAD + boxS + bGap;
+
+  /* 左：拟人动物 + 主副人格标签 */
+  roundRect(ctx, b1, boxY, boxS, boxS, 32);
+  ctx.fillStyle = 'rgba(255,255,255,.88)'; ctx.fill();
+  ctx.strokeStyle = 'rgba(255,214,231,.90)'; ctx.lineWidth = 2; ctx.stroke();
+
+  drawAvatar(ctx, res.mbti.mainKey, b1 + boxS/2, boxY + 110, 78);
+
+  var st1 = IP_STYLE[res.mbti.mainKey] || IP_STYLE.cat;
+  var st2 = IP_STYLE[res.mbti.subKey] || IP_STYLE.cat;
+
+  function tagRow(ty, text, bg, fg){
+    roundRect(ctx, b1 + 22, ty, boxS - 44, 42, 21);
+    ctx.fillStyle = bg; ctx.fill();
+    ctx.fillStyle = fg;
+    ctx.textAlign = 'center';
+    ctx.font = '700 22px ' + FF_CN;
+    ctx.fillText(text, b1 + boxS/2, ty + 28);
+  }
+  tagRow(boxY + 200, '主人格 · ' + res.mbti.main.name, st1.fur, '#6E5460');
+  tagRow(boxY + 250, '副人格 · ' + res.mbti.sub.name, st2.fur2, '#5E4E62');
+
+  /* 右：六芒星维度图 */
+  roundRect(ctx, b2, boxY, boxS, boxS, 32);
+  ctx.fillStyle = 'rgba(255,255,255,.88)'; ctx.fill();
+  ctx.strokeStyle = 'rgba(214,226,255,.90)'; ctx.stroke();
+
+  ctx.textAlign = 'left';
+  ctx.fillStyle = '#8A82A0';
+  ctx.font = '700 20px ' + FF_CN;
+  ctx.fillText('人格维度', b2 + 24, boxY + 36);
+
+  var radarItems = [];
+  for(var i=0;i<POSTER_BAR_DIMS.length;i++){
+    var dv = dimView(POSTER_BAR_DIMS[i]);
+    radarItems.push({
+      label: dv.label,
+      val: (res.pct && res.pct[dv.key] != null) ? res.pct[dv.key] : 50,
+      color: dv.bar
+    });
+  }
+
+  drawRadar(ctx, b2 + boxS/2, boxY + 180, 74, radarItems);
+
+  /* ---- 性格总结 ---- */
+  var head = POSTER_HEADLINE[res.mbti.code] || ('你是' + res.mbti.name);
+  var lineA = firstClauses(res.mbti.main.desc, 2);
+  var lineB = firstClauses(res.mbti.sub.desc, 2);
+  var body = lineA + '，也' + lineB + '。';
+
+  var cardX = PAD, cardW = innerW, ipd = 32;
+  var cardY = boxY + boxS + 30;
+
+  ctx.font = '400 25px ' + FF_CN;
+  var bodyH = measureWrap(ctx, body, cardW - ipd * 2, 42);
+  var headH = 54;
+  var cardH = ipd + headH + 20 + bodyH + 30;
+
+  roundRect(ctx, cardX, cardY, cardW, cardH, 28);
+  ctx.fillStyle = 'rgba(255,255,255,.90)'; ctx.fill();
+  ctx.strokeStyle = 'rgba(236,224,246,.95)'; ctx.lineWidth = 2; ctx.stroke();
+
+  ctx.textAlign = 'left';
+  ctx.font = '800 30px ' + FF_CN;
+  var hw = ctx.measureText(head).width + 44;
+  if(hw > cardW - ipd * 2) hw = cardW - ipd * 2;
+  roundRect(ctx, cardX + ipd, cardY + ipd, hw, headH, 27);
+  ctx.fillStyle = '#FFF0F6'; ctx.fill();
+
+  ctx.fillStyle = '#D2708F';
+  ctx.fillText(head, cardX + ipd + 22, cardY + ipd + 37);
+
+  ctx.fillStyle = '#5F5872';
+  ctx.font = '400 25px ' + FF_CN;
+  wrapText(ctx, body, cardX + ipd, cardY + ipd + headH + 20 + 30, cardW - ipd * 2, 42);
+
+  /* ---- 关键词胶囊 ---- */
+  var pills = pickPills(res.pct);
+  var py2 = cardY + cardH + 30;
+  var pillH = 48, pgap = 16;
+
+  ctx.font = '700 24px ' + FF_CN;
+  var widths = [], totalW = 0;
+  for(var p=0;p<pills.length;p++){
+    var tw = ctx.measureText(pills[p].text).width + 46;
+    widths.push(tw); totalW += tw;
+  }
+  totalW += pgap * Math.max(0, pills.length - 1);
+
+  var pcx = W/2 - totalW/2;
+  for(var q=0;q<pills.length;q++){
+    roundRect(ctx, pcx, py2, widths[q], pillH, pillH/2);
+    ctx.fillStyle = pills[q].bg; ctx.fill();
+    ctx.strokeStyle = 'rgba(255,255,255,.90)'; ctx.lineWidth = 2; ctx.stroke();
+    ctx.textAlign = 'center';
+    ctx.font = '700 24px ' + FF_CN;
+    ctx.fillStyle = pills[q].fg;
+    ctx.fillText(pills[q].text, pcx + widths[q]/2, py2 + 32);
+    pcx += widths[q] + pgap;
+  }
+
+  y = py2 + pillH + 40;
+
+  /* ---- 完整版五个模块 ---- */
+  var mods = res.isFreeVersion ? [] : res.modules;
+  ctx.textAlign = 'left';
+
+  for(var mi=0;mi<mods.length;mi++){
+    var m = mods[mi];
+    ctx.fillStyle = '#D2708F';
+    ctx.font = '700 26px ' + FF_CN;
+    ctx.fillText(m.title, PAD, y);
+
+    ctx.fillStyle = 'rgba(255,190,216,.80)';
+    roundRect(ctx, PAD, y + 10, 52, 5, 3); ctx.fill();
+    y += 44;
+
+    ctx.fillStyle = '#5F5872';
+    ctx.font = '400 25px ' + FF_CN;
+    y = wrapText(ctx, m.text, PAD, y, innerW, 42);
+    y += 18;
+  }
+
+  /* ---- 星座 ---- */
+  if(res.zodiac){
+    y += 12;
+    roundRect(ctx, PAD, y - 26, innerW, 132, 26);
+    ctx.fillStyle = 'rgba(255,244,249,.92)'; ctx.fill();
+    ctx.strokeStyle = 'rgba(255,214,231,.85)'; ctx.lineWidth = 2; ctx.stroke();
+
+    ctx.textAlign = 'left';
+    ctx.fillStyle = '#B08FB8';
+    ctx.font = '500 21px ' + FF_CN;
+    ctx.fillText('星座趣味参考', PAD + 28, y + 16);
+
+    ctx.fillStyle = '#6F6784';
+    ctx.font = '700 27px ' + FF_CN;
+    ctx.fillText(res.zodiac.name + ' · ' + res.zodiac.desc, PAD + 28, y + 60);
+    y += 132;
+  }
+
+  /* ---- 底部 ---- */
+  y += 36;
+  ctx.textAlign = 'center';
+  ctx.fillStyle = '#B8A9C7';
+  ctx.font = '500 23px ' + FF_CN;
+  ctx.fillText('长按保存 · 测测你心里住着哪只小动物', W/2, y);
+  y += 52;
+
+  /* ---- 裁剪 ---- */
+  var usedH = Math.min(Math.ceil(y), 3200);
+  var OUT = document.createElement('canvas');
+  OUT.width = W;
+  OUT.height = usedH;
+  OUT.getContext('2d').drawImage(C, 0, 0, W, usedH, 0, 0, W, usedH);
+  return OUT;
+}
+
+$('btnPoster').onclick = function(){
+  if(!lastResult){ toast('请先完成测试喵～'); return; }
+  try{
+    var cv = buildPoster(lastResult);
+    var url = cv.toDataURL('image/jpeg', 0.94);
+    var box = $('posterScroll');
+    box.innerHTML = '';
+    var img = new Image();
+    img.onload = function(){
+      $('posterLayer').classList.add('show');
+    };
+    img.src = url;
+    box.appendChild(img);
+  }catch(e){
+    toast('海报生成失败，请重试');
+  }
+};
+
+$('btnClosePoster').onclick = function(){
+  $('posterLayer').classList.remove('show');
+};
+$('posterMask').onclick = function(){
+  $('posterLayer').classList.remove('show');
+};
+
+/* 首次进入 */
+renderQuestion();
+
+/* 调试出口（可删，不影响功能） */
+window.__ZOO__ = {
+  runTest:runTest, normalize:normalize, getZodiac:getZodiac, checkValid:checkValid,
+  questionConfig:questionConfig, mbtiIpMap:mbtiIpMap, buildIpSvg:buildIpSvg,
+  buildPoster:buildPoster, pickPills:pickPills,
+  state:function(){ return state; }
+};
+
+})();
+</script>
+</body>
+</html>
